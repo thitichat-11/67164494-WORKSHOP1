@@ -74,33 +74,24 @@
 ## 8. ผังการทำงานและโครงสร้างระบบ (System Diagrams)
 
 ### 8.1 Use Case Diagram
-แสดงขอบเขตของระบบและปฏิสัมพันธ์ของผู้ใช้งานทั้ง 2 กลุ่ม (Customer และ Admin) กับฟังก์ชันต่างๆ ภายในระบบ SALA STORE
-
 ```mermaid
 graph TD
-    %% Users
     Customer((Customer))
     Admin((Admin))
 
-    subgraph SALA_E_Commerce_System [SALA STORE System]
-        %% Authentication
+    subgraph SALA_STORE_System [SALA STORE System]
         UC_Auth(Log in / Register)
         UC_Profile(Manage Profile)
-        
-        %% Customer Functions
         UC_Search(Search & Filter Clothes)
         UC_Cart(Manage Shopping Cart)
-        UC_Checkout(Checkout & Simulation Payment)
-        UC_History(View Buy History / Order Tracking)
-        
-        %% Admin Functions
+        UC_Checkout(Checkout & Simulation)
+        UC_History(View Buy History)
         UC_ManageProduct(Manage Products & Inventory)
         UC_ManageCategory(Manage Categories)
-        UC_ManageUser(Manage Users / Customer Data)
+        UC_ManageUser(Manage Users)
         UC_Dashboard(View Sales Report & Dashboard)
     end
 
-    %% Customer Connections
     Customer --> UC_Auth
     Customer --> UC_Profile
     Customer --> UC_Search
@@ -108,19 +99,14 @@ graph TD
     Customer --> UC_Checkout
     Customer --> UC_History
 
-    %% Admin Connections
     Admin --> UC_Auth
     Admin --> UC_ManageProduct
     Admin --> UC_ManageCategory
     Admin --> UC_ManageUser
     Admin --> UC_Dashboard
-    Admin --> UC_ManageUser
-    Admin --> UC_Dashboard
 
-### 8.2 Class Diagram
-แสดงโครงสร้างของข้อมูลความสัมพันธ์ (Relationships) และเมธอดหลักๆ ของระบบเพื่อนำไปใช้ออกแบบฐานข้อมูลและเขียนโค้ด
-
-classDiagram
+### 8.2 class diagram
+    classDiagram
     class User {
         +int id
         +string email
@@ -178,7 +164,6 @@ classDiagram
         +double price
     }
 
-    %% Relationships
     User "1" --> "0..1" Cart : has
     User "1" --> "0..*" Order : places
     Category "1" --> "0..*" Product : contains
@@ -187,9 +172,8 @@ classDiagram
     Order "1" --> "0..*" OrderItem : consists_of
     Product "1" --> "0..*" OrderItem : ordered_in
 
-### 8.3 Sequence Diagram
-แสดงลำดับขั้นตอนการทำงานและการส่งข้อมูลระหว่างกัน ตั้งแต่ลูกค้าเลือกสินค้าลงตะกร้าไปจนถึงการบันทึกคำสั่งซื้อลงฐานข้อมูล
 
+### 8.3 class diagram
 sequenceDiagram
     autonumber
     actor Customer as Customer
