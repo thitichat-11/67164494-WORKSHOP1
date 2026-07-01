@@ -71,7 +71,10 @@
 
 ---
 
-## 8. ผังการทำงานของระบบ (Use Case Diagram เบื้องต้น)
+## 8. ผังการทำงานและโครงสร้างระบบ (System Diagrams)
+
+### 8.1 Use Case Diagram
+แสดงขอบเขตของระบบและปฏิสัมพันธ์ของผู้ใช้งานทั้ง 2 กลุ่ม (Customer และ Admin) กับฟังก์ชันต่างๆ ภายในระบบ SALA STORE
 
 ```mermaid
 graph TD
@@ -79,23 +82,136 @@ graph TD
     Customer((Customer))
     Admin((Admin))
 
-    %% Use Cases
-    UC_Auth(Log in / Register)
-    UC_Search(Search & Filter Clothes)
-    UC_Cart(Manage Cart & Checkout)
-    UC_History(View Buy History)
-    
-    UC_ManageProduct(Add/Edit/Delete Product & Category)
-    UC_ManageUser(Manage Users)
-    UC_Dashboard(View Dashboard & Sales Report)
+    subgraph SALA_E_Commerce_System [SALA STORE System]
+        %% Authentication
+        UC_Auth(Log in / Register)
+        UC_Profile(Manage Profile)
+        
+        %% Customer Functions
+        UC_Search(Search & Filter Clothes)
+        UC_Cart(Manage Shopping Cart)
+        UC_Checkout(Checkout & Simulation Payment)
+        UC_History(View Buy History / Order Tracking)
+        
+        %% Admin Functions
+        UC_ManageProduct(Manage Products & Inventory)
+        UC_ManageCategory(Manage Categories)
+        UC_ManageUser(Manage Users / Customer Data)
+        UC_Dashboard(View Sales Report & Dashboard)
+    end
 
-    %% Connections
+    %% Customer Connections
     Customer --> UC_Auth
+    Customer --> UC_Profile
     Customer --> UC_Search
     Customer --> UC_Cart
+    Customer --> UC_Checkout
     Customer --> UC_History
 
+    %% Admin Connections
     Admin --> UC_Auth
     Admin --> UC_ManageProduct
+    Admin --> UC_ManageCategory
     Admin --> UC_ManageUser
     Admin --> UC_Dashboard
+    Admin --> UC_ManageUser
+    Admin --> UC_Dashboard
+
+### 8.2 Class Diagram
+แสดงโครงสร้างของข้อมูลความสัมพันธ์ (Relationships) และเมธอดหลักๆ ของระบบเพื่อนำไปใช้ออกแบบฐานข้อมูลและเขียนโค้ด
+
+classDiagram
+    class User {
+        +int id
+        +string email
+        +string password_hash
+        +string role
+        +register()
+        +login()
+    }
+
+    class Product {
+        +int id
+        +string name
+        +string description
+        +double price
+        +int stock
+        +int category_id
+        +updateStock()
+    }
+
+    class Category {
+        +int id
+        +string name
+    }
+
+    class Cart {
+        +int id
+        +int user_id
+        +addItem()
+        +removeItem()
+        +clearCart()
+    }
+
+    class CartItem {
+        +int id
+        +int cart_id
+        +int product_id
+        +int quantity
+    }
+
+    class Order {
+        +int id
+        +int user_id
+        +double total_price
+        +string status
+        +datetime created_at
+        +createOrder()
+        +updateStatus()
+    }
+
+    class OrderItem {
+        +int id
+        +int order_id
+        +int product_id
+        +int quantity
+        +double price
+    }
+
+    %% Relationships
+    User "1" --> "0..1" Cart : has
+    User "1" --> "0..*" Order : places
+    Category "1" --> "0..*" Product : contains
+    Cart "1" --> "0..*" CartItem : contains
+    Product "1" --> "0..*" CartItem : added_to
+    Order "1" --> "0..*" OrderItem : consists_of
+    Product "1" --> "0..*" OrderItem : ordered_in
+
+### 8.3 Sequence Diagram
+แสดงลำดับขั้นตอนการทำงานและการส่งข้อมูลระหว่างกัน ตั้งแต่ลูกค้าเลือกสินค้าลงตะกร้าไปจนถึงการบันทึกคำสั่งซื้อลงฐานข้อมูล
+
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    participant FE as Front-end (UI)
+    participant BE as Back-end (API)
+    participant DB as Database (SQL)
+
+    Customer->>FE: ค้นหาและเลือกเสื้อผ้าที่ต้องการ
+    FE->>Customer: แสดงรายละเอียดและปุ่มเพิ่มลงตะกร้า
+    Customer->>FE: คลิก "เพิ่มสินค้าลงตะกร้า"
+    FE->>BE: POST /api/cart (user_id, product_id, qty)
+    BE->>DB: ตรวจสอบสต็อกสินค้า (Check Stock)
+    DB-->>BE: สินค้ามีพร้อมจำหน่าย
+    BE->>DB: บันทึกข้อมูลลงตาราง Cart/CartItem
+    BE-->>FE: ส่งสถานะสำเร็จ (200 OK)
+    FE-->>Customer: แสดงไอคอนสินค้าเพิ่มในตะกร้าสำเร็จ
+
+    Customer->>FE: คลิก "ชำระเงิน (Checkout)"
+    FE->>BE: POST /api/orders (ข้อมูลที่อยู่, รายการสินค้า)
+    BE->>DB: สร้างรายการในตาราง Orders & Order_Items
+    BE->>DB: อัปเดตลดจำนวนสต็อกสินค้า (Update Product Stock)
+    BE->>DB: ล้างข้อมูลสินค้าในตะกร้า (Clear Cart)
+    DB-->>BE: บันทึกและอัปเดตข้อมูลสำเร็จ
+    BE-->>FE: ส่งข้อมูล Order Details และสถานะสำเร็จ
+    FE-->>Customer: แสดงหน้าต่าง "สั่งซื้อสินค้าสำเร็จ" และเลขออเดอร์
