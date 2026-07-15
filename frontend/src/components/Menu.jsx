@@ -11,7 +11,7 @@ const Menu = () => {
 
   return (
     <>
-        <div className='position-relative d-flex justify-content-center align-items-center p-3'>
+        <div className='position-relative d-flex justify-content-center align-items-center p-3 mt-2'>
             <h1 className='m-0 fw-bolder'>SALA</h1>
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
@@ -55,10 +55,6 @@ const Menu = () => {
 
         <div className='mt-5'>
             <Outlet />
-        </div>
-
-        <div>
-
         </div>
     </>
   )
