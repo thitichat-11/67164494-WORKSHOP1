@@ -6,6 +6,7 @@ import Menu from "./components/Menu";
 // page จากฝั่ง user
 import Collaborations from "./pages/user/Collaborations";
 import MainPage from "./pages/user/MainPage";
+import ComeOnTrend from "./pages/user/ComeOnTrend";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route element={<Menu />}>
             <Route path="mainpage" element={<MainPage />} />
             <Route path="collaborations" element={<Collaborations />} />
+            <Route path="comeontrend" element={<ComeOnTrend />} />
           </Route>
         </Routes>
       </BrowserRouter>
