@@ -7,6 +7,7 @@ import Menu from "./components/Menu";
 import Collaborations from "./pages/user/Collaborations";
 import MainPage from "./pages/user/MainPage";
 import ComeOnTrend from "./pages/user/ComeOnTrend";
+import SeeMoreInHer from "./pages/user/SeeMoreInHer";
 
 const App = () => {
   return (
@@ -17,6 +18,8 @@ const App = () => {
             <Route path="mainpage" element={<MainPage />} />
             <Route path="collaborations" element={<Collaborations />} />
             <Route path="comeontrend" element={<ComeOnTrend />} />
+            <Route path="seemoreinher" element={<SeeMoreInHer />} /> 
+   
           </Route>
         </Routes>
       </BrowserRouter>
