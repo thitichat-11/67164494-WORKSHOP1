@@ -12,11 +12,11 @@ const LayOut = () => {
             <div className='col-4 pe-4'>
                 <div className='mb-2'>SALA</div>
                 <div className='fw-normal' style={{ fontSize: '14px' }}>
-                    <Link tp>
+                    <Link to='collaborations' className='text-decoration-none text-dark'>
                         <div>COLLABORATIONS</div>
                     </Link>
                     <div>PRIVACY POLICY</div>
-                    <Link>
+                    <Link to='comeontrend' className='text-decoration-none text-dark'>
                         <div>COME ON TREND</div>
                     </Link>
                 </div>
