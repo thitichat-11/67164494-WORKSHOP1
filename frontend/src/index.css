@@ -1,10 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Akatab:wght@400;600;800&display=swap');
 
 body, html {
   font-family: 'Abhaya Libre';
   background-color: #FFFEF0;
 }
 
-h1, h2, h3, h4, h5, h6, button, span, p, i {
+h1, h2, h3, h4, h5, h6, button, span, p, i, a, div {
   font-family: 'Abhaya Libre';
+}
+
+.use-abril, .use-abril * {
+  font-family: 'Abril Fatface', serif !important;
+}
+
+.use-akatab, .use-akatab * {
+  font-family: 'Akatab', sans-serif !important;
 }
