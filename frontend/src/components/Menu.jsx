@@ -24,7 +24,7 @@ const Menu = () => {
                     <i className="bi bi-heart"></i>
                 </NavLink>
 
-                <NavLink to='/' className='text-decoration-none text-dark'>   
+                <NavLink to='searchpage' className='text-decoration-none text-dark'>   
                     <i className="bi bi-search"></i>
                 </NavLink>
             </div>
