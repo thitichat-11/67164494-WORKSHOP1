@@ -1,9 +1,10 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Menu from './components/Menu';
-import Collaborations from './pages/user/Collaborations';
 
 // page จากฝั่ง user
+import Collaborations from './pages/user/Collaborations';
 
 
 const App = () => {
