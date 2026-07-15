@@ -5,7 +5,7 @@ import Menu from './components/Menu';
 
 // page จากฝั่ง user
 import Collaborations from './pages/user/Collaborations';
-import MainPage from './pages/user/MainPage'; // สมมติว่าคุณมีหน้า MainPage สำหรับหน้าแรก
+import MainPage from './pages/user/MainPage';
 
 
 const App = () => {
@@ -15,10 +15,7 @@ const App = () => {
         <Routes>
           <Route element={<Menu />}>
             
-            {/* เพิ่มบรรทัดนี้: เพื่อให้เป็นหน้าเริ่มต้นเมื่อเข้ามาที่ URL หลัก */}
-            <Route index element={<MainPage />} /> 
-            {/* หรือจะใช้เป็น <Route path="/" element={<MainPage />} /> ก็ได้ครับ */}
-
+            <Route path='mainpage' element={<MainPage />} /> 
             <Route path='collaborations' element={<Collaborations />} />
           
           </Route>
