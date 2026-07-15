@@ -1,28 +1,25 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Menu from './components/Menu';
+import Menu from "./components/Menu";
 
 // page จากฝั่ง user
-import Collaborations from './pages/user/Collaborations';
-import MainPage from './pages/user/MainPage';
-
+import Collaborations from "./pages/user/Collaborations";
+import MainPage from "./pages/user/MainPage";
 
 const App = () => {
   return (
-    <div style={{backgroundColor: '#FFFEF0'}}>
-      <BrowserRouter basename='/SALA/'>
+    <div style={{ backgroundColor: "#FFFEF0" }}>
+      <BrowserRouter basename="/SALA/">
         <Routes>
           <Route element={<Menu />}>
-            
-            <Route path='mainpage' element={<MainPage />} /> 
-            <Route path='collaborations' element={<Collaborations />} />
-          
+            <Route path="mainpage" element={<MainPage />} />
+            <Route path="collaborations" element={<Collaborations />} />
           </Route>
         </Routes>
       </BrowserRouter>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
