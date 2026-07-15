@@ -1,7 +1,14 @@
 import React from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 const Menu = () => {
+
+    const getUnderLine = ({ isActive }) => {
+        return `text-decoration-none text-dark m-0 d-inline-block pb-1 ${
+        isActive ? 'border-bottom border-dark fw-bold' : ''
+        }`
+    }
+
   return (
     <>
         <div className='position-relative d-flex justify-content-center align-items-center p-3'>
@@ -9,17 +16,17 @@ const Menu = () => {
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
                 
-                <Link to='/' className='text-decoration-none text-dark'>   
+                <NavLink to='/' className='text-decoration-none text-dark'>   
                     <i className="bi bi-bag"></i>
-                </Link>
+                </NavLink>
 
-                <Link to='/' className='text-decoration-none text-dark'>   
+                <NavLink to='/' className='text-decoration-none text-dark'>   
                     <i className="bi bi-heart"></i>
-                </Link>
+                </NavLink>
 
-                <Link to='/' className='text-decoration-none text-dark'>   
+                <NavLink to='/' className='text-decoration-none text-dark'>   
                     <i className="bi bi-search"></i>
-                </Link>
+                </NavLink>
             </div>
         </div>
 
@@ -27,27 +34,31 @@ const Menu = () => {
         <div className='row g-0 text-center py-2'>
 
             <div className='col-4 d-flex justify-content-end align-items-center pe-4'>
-                <Link to='/' className='text-decoration-none text-dark'>            
-                    <p className='m-0'>SALA</p>
-                </Link>
+                <NavLink to='/' end className={getUnderLine}>            
+                    SALA
+                </NavLink>
             </div>
 
             <div className='col-4 d-flex justify-content-center align-items-center'>
-                <Link to='/collaborations' className='text-decoration-none text-dark fw-medium'>           
-                    <p className='m-0'>COLLABORATIONS</p>
-                </Link>
+                <NavLink to='/collaborations' className={getUnderLine}>           
+                    COLLABORATIONS
+                </NavLink>
             </div>
 
             <div className='col-4 d-flex justify-content-start align-items-center ps-4'>
-                <Link to='/' className='text-decoration-none text-dark'>       
-                    <p className='m-0'>COME ON TREND</p>
-                </Link>
+                <NavLink to='/comeontrend' className={getUnderLine}>       
+                    COME ON TREND
+                </NavLink>
             </div>
             
         </div>
 
-        <div className='mt-8'>
+        <div className='mt-5'>
             <Outlet />
+        </div>
+
+        <div>
+
         </div>
     </>
   )
