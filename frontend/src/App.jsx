@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Collaborations from "./pages/user/Collaborations";
 import MainPage from "./pages/user/MainPage";
 import ComeOnTrend from "./pages/user/ComeOnTrend";
+import SeeMoreInHer from "./pages/user/SeeMoreInHer";
 
 // components
 import Menu from "./components/Menu";
@@ -22,6 +23,8 @@ const App = () => {
             <Route path="mainpage" element={<MainPage />} />
             <Route path="collaborations" element={<Collaborations />} />
             <Route path="comeontrend" element={<ComeOnTrend />} />
+            <Route path="seemoreinher" element={<SeeMoreInHer />} /> 
+   
           </Route>
 
           <Route element={<LayOut />}>
