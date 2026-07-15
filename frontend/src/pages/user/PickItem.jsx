@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 
-    // ข้อมูลจำลองสำหรับสินค้าแนะนำ (You may also like)
+    // demo ไว้ก่อน
     const recommendedProducts = [
     {
         id: 1,
