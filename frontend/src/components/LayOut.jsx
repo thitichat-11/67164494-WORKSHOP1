@@ -7,7 +7,7 @@ const LayOut = () => {
     <>
         <Menu />
 
-        <footer className='row g-0 text-center py-2 fw-bolder'>
+        <footer className='row g-0 text-center py-2 fw-bolder mt-4'>
 
             <div className='col-4 pe-4'>
                 <div className='mb-2'>SALA</div>
