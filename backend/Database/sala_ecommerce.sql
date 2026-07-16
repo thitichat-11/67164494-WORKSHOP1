@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db:3306
--- Generation Time: Jul 15, 2026 at 06:40 PM
+-- Generation Time: Jul 16, 2026 at 04:54 PM
 -- Server version: 8.0.46
 -- PHP Version: 8.3.30
 
@@ -85,6 +85,14 @@ CREATE TABLE `products` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`product_id`, `category_id`, `name`, `description`, `base_price`, `created_at`) VALUES
+(1, 1, 'เสื้อยืดสุดหล่อของสุรวัศ', 'เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ', 999.00, '2026-07-16 13:59:12'),
+(2, 5, 'กางเกงใน robin', 'กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin', 1009.00, '2026-07-16 13:59:12');
+
 -- --------------------------------------------------------
 
 --
@@ -98,6 +106,14 @@ CREATE TABLE `product_images` (
   `img_url` varchar(255) NOT NULL,
   `is_primary` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `product_images`
+--
+
+INSERT INTO `product_images` (`image_id`, `product_id`, `variant_id`, `img_url`, `is_primary`) VALUES
+(1, 2, 1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyJG-XFKzK7mU9O0Jbqr5bfg2g46RVV1sEG_EVh-Pn9YXxctXFp04YHRM&s=10', 1),
+(2, 1, 2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSUN2Eg_-MXjK8SmtNxjNg6Sbsi2gxPBUjZiDnuvwbtksCwRA6c5D30B-O&s=10', 1);
 
 -- --------------------------------------------------------
 
@@ -113,6 +129,14 @@ CREATE TABLE `product_variants` (
   `code` varchar(100) NOT NULL,
   `stock_quantity` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `product_variants`
+--
+
+INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `code`, `stock_quantity`) VALUES
+(1, 2, 'red', 'L', 'tft-300', 5),
+(2, 1, 'green', '2XL', 'abc-67', 5);
 
 -- --------------------------------------------------------
 
@@ -231,19 +255,19 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_images`
 --
 ALTER TABLE `product_images`
-  MODIFY `image_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_variants`
 --
 ALTER TABLE `product_variants`
-  MODIFY `variant_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `variant_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `roles`
