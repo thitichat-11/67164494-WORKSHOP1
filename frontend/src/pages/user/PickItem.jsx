@@ -1,5 +1,6 @@
 import React from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
     // demo ไว้ก่อน
     const recommendedProducts = [
@@ -142,12 +143,14 @@ const PickItem = () => {
 
                 {/* ปุ่ม */}
                 <div className="d-flex flex-column gap-2 mt-2 use-42dot">
-                    <Button variant="dark" className="rounded-0 py-2.5 fw-bold text-uppercase" 
+                    <Button as={Link} to="/shippingbagpage" 
+                    variant="dark" className="rounded-0 py-2.5 fw-bold text-uppercase text-decoration-none text-center" 
                     style={{ fontSize: '12px', letterSpacing: '1px' }}>
                         Add to Bag
                     </Button>
-
-                    <Button variant="outline-dark" className="rounded-0 py-2.5 fw-bold text-uppercase" 
+  
+                    <Button as={Link} to="/" 
+                    variant="outline-dark" className="rounded-0 py-2.5 fw-bold text-uppercase" 
                     style={{ fontSize: '12px', letterSpacing: '1px', backgroundColor: 'white' }}>
                         Save Item
                     </Button>
