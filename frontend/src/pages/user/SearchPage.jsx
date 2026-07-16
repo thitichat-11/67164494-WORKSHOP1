@@ -19,7 +19,7 @@ const SearchPage = () => {
   return (
     <div className="min-h-screen text-neutral-800 p-6 md:p-12 lg:p-16 flex flex-col items-center ">
       <header className="max-w-2xl w-full mb-20 mt-4">
-        <div className="flex items-center justify-center py-2 border-b-2 border-black">
+        <div className="flex items-center justify-center py-2 border-b border-black">
           <svg
             className="w-4 h-4 text-black mr-3"
             fill="none"
