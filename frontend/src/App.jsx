@@ -45,7 +45,7 @@ const App = () => {
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
           <Route element={<LayOut />}>
             <Route path="/pickitem/:id" element={<PickItem />} />
-            <Route path="shippingbagpage" element={<ShippingBagPage />} />
+            <Route path="shippingbagpage/:id" element={<ShippingBagPage />} />
             <Route path="mainpage" element={<MainPage />} />
             <Route path="seemorespring" element={<SeeMoreSpring />} />
           </Route>

@@ -1,17 +1,18 @@
-import React, { useState } from 'react'; // เพิ่ม useState ตรงนี้
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import PickItem from './PickItem';
 
 const ShippingBagPage = () => {
 
   const navigate = useNavigate()
+  const { id } = useParams() // ดึง id มา
 
   const [quantity, setQuantity] = useState(1) // ค่าจำนวนสินค้า
 
   const handleClose = () => {
-    navigate('/pickitem')
+    navigate(`/pickitem/${id}`)
   }
 
   return (
@@ -20,7 +21,7 @@ const ShippingBagPage = () => {
         <div className="position-relative" style={{ minHeight: '100vh', overflow: 'hidden' }}>
         
         <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
-            <PickItem />
+            <PickItem productId={id} />
         </div>
 
         {/* ทำให้พื้นหลังมันมืด ๆ หน่อย */}
@@ -131,7 +132,7 @@ const ShippingBagPage = () => {
 
                 
                 <div className="d-flex gap-2 use-42dot">
-                    <Button as={Link} to="/pickitem"
+                    <Button as={Link} to={`/pickitem/${id}`}
                     variant="outline-dark" 
                     className="rounded-0 py-2.5 fw-bold text-decoration-none text-center w-100"
                     style={{ fontSize: '12px', letterSpacing: '1px' }}>

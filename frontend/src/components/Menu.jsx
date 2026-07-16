@@ -1,7 +1,10 @@
 import React from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useParams } from 'react-router-dom'
 
 const Menu = () => {
+
+    const { id } = useParams() // ดึง id ปัจจุบันมา
+    const activeId = id || 1   // แต่ถ้าไม่มีก็ให้เป็น 1
 
     const getUnderLine = ({ isActive }) => {
         return `text-decoration-none text-dark m-0 d-inline-block pb-1 ${
@@ -18,7 +21,7 @@ const Menu = () => {
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
                 
-                <NavLink to='shippingbagpage' className='text-decoration-none text-dark'>   
+                <NavLink to={`/shippingbagpage/${activeId}`} className='text-decoration-none text-dark'>   
                     <i className="bi bi-bag"></i>
                 </NavLink>
 
