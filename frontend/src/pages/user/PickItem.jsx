@@ -1,44 +1,56 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import axios from 'axios'
 
-    // demo ไว้ก่อน
-    const recommendedProducts = [
-    {
-        id: 1,
-        tag: 'New Arrivals',
-        name: 'SALA Good Baby Blue Plaid Coat',
-        price: '$700',
-        image: 'https://i.pinimg.com/736x/1c/67/cd/1c67cd0258983b097b438ebc048d7e7f.jpg',
-        colors: ['#2C3E50']
-    },
-    {
-        id: 2,
-        tag: 'New Arrivals',
-        name: "SALA Girls Don't Cry Dress",
-        price: '$900',
-        image: 'https://i.pinimg.com/736x/da/67/d8/da67d87da6a9da1801f7eae25f2394aa.jpg',
-        colors: ['#000000']
-    },
-    {
-        id: 3,
-        tag: 'New Arrivals',
-        name: 'SALA Rainy Night Double-Breasted Coat',
-        price: '$560',
-        image: 'https://www.pusspussmagazine.com/wp-content/uploads/2025/02/image00003.jpg',
-        colors: ['#A07855']
-    },
-    {
-        id: 4,
-        tag: 'New Arrivals',
-        name: 'SALA WINTERFELL SWEATER',
-        price: '$400',
-        image: 'https://files.vogue.co.th/uploads/Winter_Aespa_Ralph_Lauren_Brand_Ambassador_-_COVER_VERTICAL.jpg',
-        colors: ['#F5E6D3', '#1C2833']
-    }
-    ]
 
 const PickItem = () => {
+    
+  const { id } = useParams() // ดึง product_id ที่ผู้ใช้กดมาจาก URL
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedSize, setSelectedSize] = useState(null)
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/api/item/${id}`) 
+      .then(res => {
+        const targetProduct = res.data
+        setProduct(targetProduct)
+        
+        // ตั้งค่าสีแรกและไซส์แรกของสินค้าชิ้นนั้นให้เป็นค่า Default เผื่อไว้
+        if (targetProduct.variants && targetProduct.variants.length > 0) {
+          setSelectedColor(targetProduct.variants[0].color) 
+          setSelectedSize(targetProduct.variants[0].size)
+        }
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", err)
+        setLoading(false)
+      })
+  }, [id])
+
+  if (loading) {
+    return <Container className="py-5 text-center"><p>Loading...</p></Container>
+  }
+
+  if (!product) {
+    return <Container className="py-5 text-center"><p>Product not found.</p></Container>
+  }
+
+  // ดึงภาพหลักและภาพรองจากตาราง product_images ของคุณ (ใช้ img_url ตามโครงสร้าง SQL จริง)
+  const img1 = product.images && product.images[0] ? product.images[0].img_url : "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"
+  const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
+
+  // คัดกรองเอาไซส์กับสีที่ไม่ซ้ำกัน (Unique Value) เพื่อเอามาวนลูปทำปุ่มตัวเลือก
+  const uniqueColors = product.variants 
+    ? [...new Set(product.variants.map(v => JSON.stringify({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
+    : []
+  const uniqueSizes = product.variants 
+    ? [...new Set(product.variants.map(v => v.size))] 
+    : []
+
   return (
     <>
 
@@ -60,7 +72,7 @@ const PickItem = () => {
                         // aspectRatio: '1/1' (w 1 h 1 สี่เหลี่ยมจัตุรัส)
                         style={{ aspectRatio: '1/1', overflow: 'hidden'  }}>
                             <img className="w-100 h-100 object-fit-cover"
-                            src="https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg" alt="" />
+                            src={img1} alt={product.name} />
                         </div>
                         </Col>
                         
@@ -69,7 +81,7 @@ const PickItem = () => {
                         style={{overflow: 'hidden', minHeight: '100%'}}>
                         {/* ให้รูปมันไม่ยืด */}
                             <img className="w-100 h-100 object-fit-cover"
-                            src="https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg" alt="" />
+                            src={img2} alt={product.name} />
                         </div>
                         </Col>
                     </Row>
@@ -84,15 +96,15 @@ const PickItem = () => {
                 <div className="d-flex flex-column gap-1">
                     <span className="fw-semibold" 
                     style={{ fontSize: '11px', letterSpacing: '1px' }}>
-                        New Arrivals
+                        {product.category_name || 'New Arrivals'}
                     </span>
 
                     <h1 className="fs-3 fw-normal m-0" 
                     style={{ letterSpacing: '0.5px' }}>
-                        SALA Plaid Wool-Blend Twill Shirt Jacket
+                        {product.name}
                     </h1>
 
-                    <span className="fs-5 fw-bold mt-2">$480</span>
+                    <span className="fs-5 fw-bold mt-2">${product.base_price}</span>
                 </div>
 
                 {/* เลือกสี */}
@@ -100,44 +112,79 @@ const PickItem = () => {
 
                     <span className="fw-semibold" 
                     style={{ fontSize: '13px' }}>
-                    Color:&nbsp; Brown
+                    Color:&nbsp; {selectedColor || 'Brown'}
                     </span>
 
                     {/* ตัวเลือก */}
-                    <div className="border border-dark" 
-                    style={{ width: '24px', height: '24px', backgroundColor: '#8B5A2B', cursor: 'pointer' }}
-                    ></div>
+                    <div className="d-flex gap-2">
+                        {uniqueColors.map((color, index) => (
+                            <div 
+                                key={index}
+                                className={`border ${selectedColor === color.name ? 'border-dark' : 'border-secondary'}`}
+                                style={{ 
+                                    width: '24px', 
+                                    height: '24px', 
+                                    backgroundColor: color.name.startsWith('#') ? color.name : '#8B5A2B', 
+                                    cursor: 'pointer',
+                                    outline: selectedColor === color.name ? '1px solid black' : 'none'
+                                }}
+                                onClick={() => setSelectedColor(color.name)}
+                            ></div>
+                        ))}
+                        {uniqueColors.length === 0 && (
+                            <div className="border border-dark" 
+                            style={{ width: '24px', height: '24px', backgroundColor: '#8B5A2B', cursor: 'pointer' }}
+                            ></div>
+                        )}
+                    </div>
                 </div>
 
                 {/* เลือก size */}
                 <div className="d-flex flex-column gap-2">
 
                     <span className="fw-semibold" style={{ fontSize: '13px' }}>
-                    Size:&nbsp; XS
+                    Size:&nbsp; {selectedSize || 'XS'}
                     </span>
                     
                     {/* ตัวเลือก */}
                     <div className="d-flex gap-3">
-                        <Button variant="outline-dark" className="rounded-0 px-2 py-1 fw-bold" 
-                        style={{ fontSize: '12px', backgroundColor: '#D9D9D9' }}>
-                            XS
-                        </Button>
+                        {uniqueSizes.map((size) => (
+                            <Button 
+                                key={size}
+                                variant="outline-dark" 
+                                className={`rounded-0 px-2 py-1 fw-bold ${selectedSize === size ? '' : 'border-0'}`} 
+                                style={{ 
+                                    fontSize: '12px', 
+                                    backgroundColor: selectedSize === size ? '#D9D9D9' : 'transparent' 
+                                }}
+                                onClick={() => setSelectedSize(size)}
+                            >
+                                {size}
+                            </Button>
+                        ))}
+                        {uniqueSizes.length === 0 && (
+                            <>
+                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 fw-bold" 
+                                style={{ fontSize: '12px', backgroundColor: '#D9D9D9' }}>
+                                    XS
+                                </Button>
 
-                        <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
-                        style={{ fontSize: '12px' }}>
-                            S
-                        </Button>
+                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
+                                style={{ fontSize: '12px' }}>
+                                    S
+                                </Button>
 
-                        <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
-                        style={{ fontSize: '12px'}}>
-                            M
-                        </Button>
+                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
+                                style={{ fontSize: '12px'}}>
+                                    M
+                                </Button>
 
-                        <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
-                        style={{ fontSize: '12px'}}>
-                            L
-                        </Button>
-
+                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" 
+                                style={{ fontSize: '12px'}}>
+                                    L
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -160,7 +207,7 @@ const PickItem = () => {
                 <div className="d-flex flex-column gap-2" style={{ fontSize: '13px' }}>
                     <div>
                         <span><strong>Product Code:</strong></span> &nbsp;
-                        <span>Aa813</span>
+                        <span>{product.variants && product.variants[0] ? product.variants[0].code : 'Aa813'}</span>
                     </div>
 
                     <div>
