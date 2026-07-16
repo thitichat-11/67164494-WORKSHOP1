@@ -10,12 +10,14 @@ import SeeMoreInHer from "./pages/user/SeeMoreInHer";
 import SearchPage from "./pages/user/SearchPage";
 import SaLaPick from "./pages/user/SaLaPick";
 import WishlistPage from "./pages/user/WishlistPage";
+import PickItem from "./pages/user/PickItem";
+import ShippingBagPage from "./pages/user/ShippingBagPage";
 
 // components
 import Menu from "./components/Menu";
 import LayOut from "./components/LayOut";
-import PickItem from "./pages/user/PickItem";
-import ShippingBagPage from "./pages/user/ShippingBagPage";
+import Sidebar from "./components/SideBar";
+import OrderHistory from "./pages/user/OrderHistory";
 
 
 const App = () => {
@@ -35,6 +37,10 @@ const App = () => {
             <Route path="salapick" element={<SaLaPick />} /> 
             <Route path="wishlistpage" element={<WishlistPage />} />
 
+            {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
+            <Route element={<Sidebar />}>
+              <Route path="orderhistory" element={<OrderHistory />} />
+            </Route>
           </Route>
 
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
@@ -42,6 +48,7 @@ const App = () => {
             <Route path="pickitem" element={<PickItem />} />
             <Route path="shippingbagpage" element={<ShippingBagPage />} />
           </Route>
+
           
         </Routes>
       </BrowserRouter>
