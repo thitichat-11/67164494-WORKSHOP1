@@ -51,7 +51,7 @@ const Sidebar = () => {
                 <NavLink to='/' className={getMenuClass}>Shipping Addresses</NavLink>
                 
                 <button onClick={() => setShowLogoutModal(true)}
-                  className="border-0 bg-transparent text-start p-2 px-3 text-muted w-100" 
+                  className="border-0 bg-transparent text-start p-2 px-3 w-100" 
                   style={{ fontSize: '11px', letterSpacing: '0.8px', cursor: 'pointer' }}>
                     LOGOUT
                 </button>
