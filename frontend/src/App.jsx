@@ -11,9 +11,9 @@ import SaLaPick from "./pages/user/SaLaPick";
 import WishlistPage from "./pages/user/WishlistPage";
 import PickItem from "./pages/user/PickItem";
 import ShippingBagPage from "./pages/user/ShippingBagPage";
-import Login from "./pages/user/Login";
 import OrderHistory from "./pages/user/OrderHistory";
 import SeeMoreSpring from "./pages/user/SeeMoreSpring";
+import Signin from "./pages/user/Signin";
 
 // components
 import Menu from "./components/Menu";
@@ -25,7 +25,7 @@ const App = () => {
     <div style={{ backgroundColor: "#FFFEF0" }}>
       <BrowserRouter basename="/SALA/">
         <Routes>
-          <Route path="login" element={<Login />} />
+          <Route path="signin" element={<Signin />} />
           <Route path="searchpage" element={<SearchPage />} />
 
           {/* route เฉพาะหน้าที่ต้องใช้ navbar ด้านบนนะ */}
