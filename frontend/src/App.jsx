@@ -9,6 +9,7 @@ import ComeOnTrend from "./pages/user/ComeOnTrend";
 import SeeMoreInHer from "./pages/user/SeeMoreInHer";
 import SearchPage from "./pages/user/SearchPage";
 import SaLaPick from "./pages/user/SaLaPick";
+import WishlistPage from "./pages/user/WishlistPage";
 
 // components
 import Menu from "./components/Menu";
@@ -31,6 +32,8 @@ const App = () => {
             <Route path="comeontrend" element={<ComeOnTrend />} />
             <Route path="seemoreinher" element={<SeeMoreInHer />} />
             <Route path="salapick" element={<SaLaPick />} /> 
+            <Route path="wishlistpage" element={<WishlistPage />} />
+
           </Route>
 
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
