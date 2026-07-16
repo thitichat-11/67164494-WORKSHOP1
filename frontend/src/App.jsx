@@ -14,6 +14,11 @@ import ShippingBagPage from "./pages/user/ShippingBagPage";
 import Login from "./pages/user/Login";
 import OrderHistory from "./pages/user/OrderHistory";
 import SeeMoreSpring from "./pages/user/SeeMoreSpring";
+import Checkout from "./pages/user/Checkout";
+import AccountPage from "./pages/user/AccountPage";
+import PersonalInformation from "./pages/user/ProsonalInformation";
+import ShippingAddress from "./pages/user/ShippingAddess";
+import Signup from "./pages/user/Singup";
 
 // components
 import Menu from "./components/Menu";
@@ -35,10 +40,15 @@ const App = () => {
             <Route path="seemoreinher" element={<SeeMoreInHer />} />
             <Route path="salapick" element={<SaLaPick />} />
             <Route path="wishlistpage" element={<WishlistPage />} />
+            <Route path="checkout" element={<Checkout />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
             <Route element={<Sidebar />}>
               <Route path="orderhistory" element={<OrderHistory />} />
+              <Route path="accountpage" element={<AccountPage />} />
+              <Route path="personalinformation" element={<PersonalInformation />} />
+              <Route path="shippingaddress" element={<ShippingAddress />} />
+              <Route path="signup" element={<Signup />} />
             </Route>
           </Route>
 
