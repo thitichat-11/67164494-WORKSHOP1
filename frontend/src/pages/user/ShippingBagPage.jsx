@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 import PickItem from './PickItem';
 
@@ -10,6 +11,23 @@ const ShippingBagPage = () => {
   const { id } = useParams() // ดึง id มา
 
   const [quantity, setQuantity] = useState(1) // ค่าจำนวนสินค้า
+  const [cartItem, setCartItem] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true)
+      axios.get(`http://localhost:5000/api/cart/item/${id}`)
+        .then(res => {
+          setCartItem(res.data)
+          setLoading(false)
+        })
+        .catch(err => {
+          console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลสินค้าในตะกร้า:", err)
+          setLoading(false)
+        })
+    }
+  }, [id])
 
   const handleClose = () => {
     navigate(`/pickitem/${id}`)
@@ -67,50 +85,68 @@ const ShippingBagPage = () => {
 
 
             <div className="flex-grow-1 overflow-auto pe-1">
-
-                <div className="d-flex gap-3 align-items-start mb-4">
-                    <div style={{ width: '90px', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
-                    
-                    <img className="w-100 h-100 object-fit-cover"
-                        src="https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg" alt="" />
+                {loading ? (
+                    <div className="text-center py-5" style={{ fontSize: '14px', fontFamily: 'sans-serif' }}>
+                        Loading Bag...
                     </div>
-                    
-                    <div className="d-flex flex-column gap-1">
-                        <span className="fw-semibold italic"
-                        style={{ fontSize: '10px', letterSpacing: '0.5px' }}>
-                            New Arrivals
-                        </span>
-
-                        <h6 className="m-0 fw-normal"
-                        style={{ fontSize: '13px', lineHeight: '1.2' }}>
-                            SALA Plaid Wool-Blend Twill Shirt Jacket
-                        </h6>
-
-                        <span style={{ fontSize: '12px' }}>BROWN , XS</span>
+                ) : cartItem ? (
+                    <div className="d-flex gap-3 align-items-start mb-4">
+                        <div style={{ width: '90px', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
                         
-                        <div className="d-flex align-items-center border border-dark mt-2" style={{ width: 'fit-content', height: '24px' }}>
-                            <button className="border-0 bg-transparent px-2" 
-                            style={{ fontSize: '12px', cursor: 'pointer' }}
-                            onClick={() => {
-                                if (quantity > 1) {
-                                    setQuantity(quantity - 1);
-                                }}}>
-                                &minus;
-                            </button>
-                            
-                            <span className="px-2" style={{ fontSize: '12px', minWidth: '20px', textAlign: 'center' }}>
-                                {quantity}
+                        <img className="w-100 h-100 object-fit-cover"
+                            src={cartItem.image || "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"} alt="" />
+                        </div>
+                        
+                        <div className="d-flex flex-column gap-1">
+                            <span className="fw-semibold italic"
+                            style={{ fontSize: '10px', letterSpacing: '0.5px' }}>
+                                {cartItem.category || "New Arrivals"}
+                            </span>
+
+                            <h6 className="m-0 fw-normal"
+                            style={{ fontSize: '13px', lineHeight: '1.2' }}>
+                                {cartItem.name}
+                            </h6>
+
+                            <span style={{ fontSize: '12px' }}>
+                                {cartItem.variant 
+                                    ? `${cartItem.variant.color} , ${cartItem.variant.size}` 
+                                    : 'BROWN , XS'
+                                }
                             </span>
                             
-                            <button className="border-0 bg-transparent px-2" 
-                            style={{ fontSize: '12px', cursor: 'pointer' }}
-                            onClick={() => setQuantity(quantity + 1)}>
-                                +
-                            </button>
-                        </div>
+                            <div className="d-flex align-items-center border border-dark mt-2" style={{ width: 'fit-content', height: '24px' }}>
+                                <button className="border-0 bg-transparent px-2" 
+                                style={{ fontSize: '12px', cursor: 'pointer' }}
+                                onClick={() => {
+                                    if (quantity > 1) {
+                                        setQuantity(quantity - 1);
+                                    }}}>
+                                    &minus;
+                                </button>
+                                
+                                <span className="px-2" style={{ fontSize: '12px', minWidth: '20px', textAlign: 'center' }}>
+                                    {quantity}
+                                </span>
+                                
+                                <button className="border-0 bg-transparent px-2" 
+                                style={{ fontSize: '12px', cursor: 'pointer'}}
+                                onClick={() => {
+                                    const maxStock = cartItem.variant ? cartItem.variant.stock : 5;
+                                    if (quantity < maxStock) {
+                                        setQuantity(quantity + 1);
+                                    }}}>
+                                    +
+                                </button>
+                            </div>
 
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="text-center py-5" style={{ fontSize: '14px', fontFamily: 'sans-serif' }}>
+                        Product not found
+                    </div>
+                )}
             </div>
 
 
@@ -121,7 +157,7 @@ const ShippingBagPage = () => {
                         SUBTOTAL :
                     </span>
                     <span className="fw-normal fs-5">
-                        $480
+                        {cartItem ? `$${(Number(cartItem.price) * quantity).toLocaleString()}` : '$0'}
                     </span>
                 </div>
 
