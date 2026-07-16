@@ -13,6 +13,7 @@ import PickItem from "./pages/user/PickItem";
 import ShippingBagPage from "./pages/user/ShippingBagPage";
 import Login from "./pages/user/Login";
 import OrderHistory from "./pages/user/OrderHistory";
+import SeeMoreSpring from "./pages/user/SeeMoreSpring";
 
 // components
 import Menu from "./components/Menu";
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/pickitem/:id" element={<PickItem />} />
             <Route path="shippingbagpage" element={<ShippingBagPage />} />
             <Route path="mainpage" element={<MainPage />} />
+            <Route path="seemorespring" element={<SeeMoreSpring />} />
           </Route>
 
         </Routes>
