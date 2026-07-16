@@ -5,45 +5,60 @@ import axios from 'axios'
 
 
 const PickItem = () => {
-    
-  const { id } = useParams() // ดึง product_id ที่ผู้ใช้กดมาจาก URL
+
+  const { id } = useParams() // ดึง product_id
   const [product, setProduct] = useState(null)
+  
   const [loading, setLoading] = useState(true)
+
   const [selectedColor, setSelectedColor] = useState(null)
   const [selectedSize, setSelectedSize] = useState(null)
 
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+
+  
   useEffect(() => {
     axios.get(`http://localhost:5000/api/item/${id}`) 
       .then(res => {
+        // ดึงข้อมูลมาโชว์
         const targetProduct = res.data
         setProduct(targetProduct)
         
-        // ตั้งค่าสีแรกและไซส์แรกของสินค้าชิ้นนั้นให้เป็นค่า Default เผื่อไว้
+        // เอาสีเอา size[0] มาโชว์ก่อน
         if (targetProduct.variants && targetProduct.variants.length > 0) {
           setSelectedColor(targetProduct.variants[0].color) 
           setSelectedSize(targetProduct.variants[0].size)
         }
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", err)
-        setLoading(false)
-      })
+
+        // ดึงข้อมูล You may also like มาไว้ที่ recommendedProducts
+        if (targetProduct.recommendations) {
+          setRecommendedProducts(targetProduct.recommendations)
+        } 
+        else if (targetProduct.recommended) {
+          setRecommendedProducts(targetProduct.recommended)
+        }
+
+        setLoading(false)})
+        .catch(err => {
+            console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", err)
+            setLoading(false)
+        })
   }, [id])
 
+  
   if (loading) {
     return <Container className="py-5 text-center"><p>Loading...</p></Container>
   }
 
   if (!product) {
-    return <Container className="py-5 text-center"><p>Product not found.</p></Container>
+    return <Container className="py-5 text-center"><p>Product not found</p></Container>
   }
 
-  // ดึงภาพหลักและภาพรองจากตาราง product_images ของคุณ (ใช้ img_url ตามโครงสร้าง SQL จริง)
+  // ดึงรูปมาโชว์
   const img1 = product.images && product.images[0] ? product.images[0].img_url : "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"
   const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
 
-  // คัดกรองเอาไซส์กับสีที่ไม่ซ้ำกัน (Unique Value) เพื่อเอามาวนลูปทำปุ่มตัวเลือก
+  // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม
   const uniqueColors = product.variants 
     ? [...new Set(product.variants.map(v => JSON.stringify({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
     : []
