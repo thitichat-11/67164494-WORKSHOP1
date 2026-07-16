@@ -43,7 +43,7 @@ const App = () => {
 
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
           <Route element={<LayOut />}>
-            <Route path="pickitem" element={<PickItem />} />
+            <Route path="/pickitem/:id" element={<PickItem />} />
             <Route path="shippingbagpage" element={<ShippingBagPage />} />
             <Route path="mainpage" element={<MainPage />} />
           </Route>
