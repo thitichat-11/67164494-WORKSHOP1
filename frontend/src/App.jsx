@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-
 // page จากฝั่ง user
 import Collaborations from "./pages/user/Collaborations";
 import MainPage from "./pages/user/MainPage";
@@ -19,22 +18,19 @@ import LayOut from "./components/LayOut";
 import Sidebar from "./components/SideBar";
 import OrderHistory from "./pages/user/OrderHistory";
 
-
 const App = () => {
   return (
     <div style={{ backgroundColor: "#FFFEF0" }}>
       <BrowserRouter basename="/SALA/">
         <Routes>
-
           <Route path="searchpage" element={<SearchPage />} />
 
           {/* route เฉพาะหน้าที่ต้องใช้ navbar ด้านบนนะ */}
           <Route element={<Menu />}>
-            <Route path="mainpage" element={<MainPage />} />
             <Route path="collaborations" element={<Collaborations />} />
             <Route path="comeontrend" element={<ComeOnTrend />} />
             <Route path="seemoreinher" element={<SeeMoreInHer />} />
-            <Route path="salapick" element={<SaLaPick />} /> 
+            <Route path="salapick" element={<SaLaPick />} />
             <Route path="wishlistpage" element={<WishlistPage />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
@@ -47,9 +43,8 @@ const App = () => {
           <Route element={<LayOut />}>
             <Route path="pickitem" element={<PickItem />} />
             <Route path="shippingbagpage" element={<ShippingBagPage />} />
+            <Route path="mainpage" element={<MainPage />} />
           </Route>
-
-          
         </Routes>
       </BrowserRouter>
     </div>
