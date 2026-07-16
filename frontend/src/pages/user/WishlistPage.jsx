@@ -32,6 +32,10 @@ const wishlistData = [
 const WishlistPage = () => {
   return (
     <div className="min-h-screen py-16 px-4 md:px-8 ">
+      
+      <h1 className="text-center text-2xl tracking-widest mb-8 uppercase text-black">
+  Wishlist
+</h1>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
         {wishlistData.map((item) => (
           <div key={item.id} className="flex flex-col group cursor-pointer">
