@@ -43,7 +43,7 @@ const SaLaPickProducts = [
     tag: 'Denim',
     name: 'SALA Tailored Blazer & Denim Set',
     price: '$540',
-    image: 'https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg',
+    image: 'https://www.pusspussmagazine.com/wp-content/uploads/2025/02/image00003.jpg',
     colors: ['#0B1220', '#3B4A63'],
     liked: true
   },
@@ -106,7 +106,7 @@ const SaLaPickProducts = [
     tag: 'New Arrivals',
     name: 'SALA Girls Don\'t Cry Dress',
     price: '$900',
-    image: 'https://i.pinimg.com/736x/1c/67/cd/1c67cd0258983b097b438ebc048d7e7f.jpg',
+    image: 'https://www.pusspussmagazine.com/wp-content/uploads/2025/02/image00003.jpg',
     colors: ['#000000'],
     liked: true
   },
