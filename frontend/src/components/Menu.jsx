@@ -18,7 +18,7 @@ const Menu = () => {
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
                 
-                <NavLink to='/pickitem' className='text-decoration-none text-dark'>   
+                <NavLink to='shippingbagpage' className='text-decoration-none text-dark'>   
                     <i className="bi bi-bag"></i>
                 </NavLink>
 

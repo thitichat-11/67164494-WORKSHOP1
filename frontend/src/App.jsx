@@ -15,6 +15,7 @@ import WishlistPage from "./pages/user/WishlistPage";
 import Menu from "./components/Menu";
 import LayOut from "./components/LayOut";
 import PickItem from "./pages/user/PickItem";
+import ShippingBagPage from "./pages/user/ShippingBagPage";
 
 
 const App = () => {
@@ -39,6 +40,7 @@ const App = () => {
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
           <Route element={<LayOut />}>
             <Route path="pickitem" element={<PickItem />} />
+            <Route path="shippingbagpage" element={<ShippingBagPage />} />
           </Route>
           
         </Routes>
