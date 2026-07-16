@@ -12,11 +12,13 @@ const Menu = () => {
   return (
     <>
         <div className='position-relative d-flex justify-content-center align-items-center p-3 mt-2'>
-            <h1 className='m-0 fw-bolder'>SALA</h1>
+            <NavLink to='/mainpage' className='text-decoration-none text-dark'>
+                <h1 className='m-0 fw-bolder'>SALA</h1>
+            </NavLink>
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
                 
-                <NavLink to='/' className='text-decoration-none text-dark'>   
+                <NavLink to='/pickitem' className='text-decoration-none text-dark'>   
                     <i className="bi bi-bag"></i>
                 </NavLink>
 
@@ -34,7 +36,7 @@ const Menu = () => {
         <div className='row g-0 text-center py-2'>
 
             <div className='col-4 d-flex justify-content-end align-items-center pe-4'>
-                <NavLink to='/' end className={getUnderLine}>            
+                <NavLink to='/salapick' end className={getUnderLine}>            
                     SALA
                 </NavLink>
             </div>
