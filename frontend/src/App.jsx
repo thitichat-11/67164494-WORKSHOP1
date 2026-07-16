@@ -13,15 +13,14 @@ import PickItem from "./pages/user/PickItem";
 import ShippingBagPage from "./pages/user/ShippingBagPage";
 import OrderHistory from "./pages/user/OrderHistory";
 import SeeMoreSpring from "./pages/user/SeeMoreSpring";
-<<<<<<< HEAD
+
 import Checkout from "./pages/user/Checkout";
 import AccountPage from "./pages/user/AccountPage";
 import PersonalInformation from "./pages/user/ProsonalInformation";
 import ShippingAddress from "./pages/user/ShippingAddess";
 import Signup from "./pages/user/Singup";
-=======
 import Signin from "./pages/user/Signin";
->>>>>>> c1db9069e7cb7ff47b726f14e56cca6723c19631
+
 
 // components
 import Menu from "./components/Menu";
