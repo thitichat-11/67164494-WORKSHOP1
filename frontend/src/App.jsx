@@ -11,9 +11,16 @@ import SaLaPick from "./pages/user/SaLaPick";
 import WishlistPage from "./pages/user/WishlistPage";
 import PickItem from "./pages/user/PickItem";
 import ShippingBagPage from "./pages/user/ShippingBagPage";
-import Login from "./pages/user/Login";
 import OrderHistory from "./pages/user/OrderHistory";
 import SeeMoreSpring from "./pages/user/SeeMoreSpring";
+
+import Checkout from "./pages/user/Checkout";
+import AccountPage from "./pages/user/AccountPage";
+import PersonalInformation from "./pages/user/ProsonalInformation";
+import ShippingAddress from "./pages/user/ShippingAddess";
+import Signup from "./pages/user/Singup";
+import Signin from "./pages/user/Signin";
+
 
 // components
 import Menu from "./components/Menu";
@@ -25,7 +32,7 @@ const App = () => {
     <div style={{ backgroundColor: "#FFFEF0" }}>
       <BrowserRouter basename="/SALA/">
         <Routes>
-          <Route path="login" element={<Login />} />
+          <Route path="signin" element={<Signin />} />
           <Route path="searchpage" element={<SearchPage />} />
 
           {/* route เฉพาะหน้าที่ต้องใช้ navbar ด้านบนนะ */}
@@ -35,17 +42,22 @@ const App = () => {
             <Route path="seemoreinher" element={<SeeMoreInHer />} />
             <Route path="salapick" element={<SaLaPick />} />
             <Route path="wishlistpage" element={<WishlistPage />} />
+            <Route path="/checkout/:id" element={<Checkout />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
             <Route element={<Sidebar />}>
               <Route path="orderhistory" element={<OrderHistory />} />
+              <Route path="accountpage" element={<AccountPage />} />
+              <Route path="personalinformation" element={<PersonalInformation />} />
+              <Route path="shippingaddress" element={<ShippingAddress />} />
+              <Route path="signup" element={<Signup />} />
             </Route>
           </Route>
 
           {/* route สำหรับหน้าที่ต้องมีทั้ง navbar แล้วก็ footer */}
           <Route element={<LayOut />}>
             <Route path="/pickitem/:id" element={<PickItem />} />
-            <Route path="shippingbagpage" element={<ShippingBagPage />} />
+            <Route path="shippingbagpage/:id" element={<ShippingBagPage />} />
             <Route path="mainpage" element={<MainPage />} />
             <Route path="seemorespring" element={<SeeMoreSpring />} />
           </Route>

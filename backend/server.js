@@ -4,7 +4,12 @@ import 'dotenv/config';
 import categoryRoutes from './src/Routes/categoryRoutes.js';
 import productRoutes from './src/Routes/productRoutes.js';
 import itemRouter from './src/Routes/itemRouter.js';
+<<<<<<< HEAD
 import salapickRoutes from './src/Routes/salapickRoutes.js';
+=======
+import cartRoutes from './src/Routes/cartRoutes.js';
+import authRouter from './src/Routes/authRouter.js';
+>>>>>>> 02448b982f0e92f84213aabb4991b774f9e1da1b
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +21,8 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 
 app.use('/api/item', itemRouter);
+app.use('/api', cartRoutes);
+app.use('/api/auth', authRouter);
 
 app.use('/api/salapicks', salapickRoutes);
 

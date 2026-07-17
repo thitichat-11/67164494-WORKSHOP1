@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db:3306
--- Generation Time: Jul 16, 2026 at 04:54 PM
+-- Generation Time: Jul 17, 2026 at 01:48 PM
 -- Server version: 8.0.46
 -- PHP Version: 8.3.30
 
@@ -91,7 +91,9 @@ CREATE TABLE `products` (
 
 INSERT INTO `products` (`product_id`, `category_id`, `name`, `description`, `base_price`, `created_at`) VALUES
 (1, 1, 'เสื้อยืดสุดหล่อของสุรวัศ', 'เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ เสื้อยีดสุดหล่อของสุรวัศ', 999.00, '2026-07-16 13:59:12'),
-(2, 5, 'กางเกงใน robin', 'กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin', 1009.00, '2026-07-16 13:59:12');
+(2, 5, 'กางเกงใน robin', 'กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin กางเกงใน robin', 1009.00, '2026-07-16 13:59:12'),
+(4, 5, 'SALA Plaid Wool-Blend Jacket', 'เสื้อแจ็คเก็ตลายสก็อตผ้าขนสัตว์ อบอุ่นและมีสไตล์', 480.00, '2026-07-17 13:44:52'),
+(6, 1, 'pepsi shirth', 'pepsi mannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn', 480.00, '2026-07-17 13:46:39');
 
 -- --------------------------------------------------------
 
@@ -113,7 +115,11 @@ CREATE TABLE `product_images` (
 
 INSERT INTO `product_images` (`image_id`, `product_id`, `variant_id`, `img_url`, `is_primary`) VALUES
 (1, 2, 1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyJG-XFKzK7mU9O0Jbqr5bfg2g46RVV1sEG_EVh-Pn9YXxctXFp04YHRM&s=10', 1),
-(2, 1, 2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSUN2Eg_-MXjK8SmtNxjNg6Sbsi2gxPBUjZiDnuvwbtksCwRA6c5D30B-O&s=10', 1);
+(2, 1, 2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSUN2Eg_-MXjK8SmtNxjNg6Sbsi2gxPBUjZiDnuvwbtksCwRA6c5D30B-O&s=10', 1),
+(3, 4, NULL, 'jacket-brown-front.jpg', 1),
+(4, 4, NULL, 'jacket-brown-back.jpg', 0),
+(5, 6, NULL, 'PEPSI-brown-front.jpg', 1),
+(6, 6, NULL, 'PEPSI-brown-back.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -136,7 +142,11 @@ CREATE TABLE `product_variants` (
 
 INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `code`, `stock_quantity`) VALUES
 (1, 2, 'red', 'L', 'tft-300', 5),
-(2, 1, 'green', '2XL', 'abc-67', 5);
+(2, 1, 'green', '2XL', 'abc-67', 5),
+(3, 4, 'Brown', 'M', 'SALA-JKT-BRN-M', 15),
+(4, 4, 'Brown', 'L', 'SALA-JKT-BRN-L', 20),
+(7, 6, 'blue', 'XL', 'pepsi-JKT-BRN-XL', 15),
+(8, 6, 'RED', 'L', 'pepsi-JKT-BRN-L', 20);
 
 -- --------------------------------------------------------
 
@@ -255,19 +265,19 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `product_images`
 --
 ALTER TABLE `product_images`
-  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `product_variants`
 --
 ALTER TABLE `product_variants`
-  MODIFY `variant_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `variant_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `roles`

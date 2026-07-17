@@ -205,16 +205,16 @@ const PickItem = () => {
 
                 {/* ปุ่ม */}
                 <div className="d-flex flex-column gap-2 mt-2 use-42dot">
-                    <Button as={Link} to="/shippingbagpage" 
-                    variant="dark" className="rounded-0 py-2.5 fw-bold text-uppercase text-decoration-none text-center" 
+                    <Button as={Link} to={`/shippingbagpage/${product.product_id}`}
+                    variant="dark" className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
                     style={{ fontSize: '12px', letterSpacing: '1px' }}>
-                        Add to Bag
+                        ADD TO BAG
                     </Button>
   
                     <Button as={Link} to="/" 
-                    variant="outline-dark" className="rounded-0 py-2.5 fw-bold text-uppercase" 
+                    variant="outline-dark" className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
                     style={{ fontSize: '12px', letterSpacing: '1px', backgroundColor: 'white' }}>
-                        Save Item
+                        SAVE ITEM
                     </Button>
                 </div>
 
