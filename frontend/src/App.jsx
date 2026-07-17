@@ -42,7 +42,7 @@ const App = () => {
             <Route path="seemoreinher" element={<SeeMoreInHer />} />
             <Route path="salapick" element={<SaLaPick />} />
             <Route path="wishlistpage" element={<WishlistPage />} />
-            <Route path="checkout" element={<Checkout />} />
+            <Route path="/checkout/:id" element={<Checkout />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
             <Route element={<Sidebar />}>

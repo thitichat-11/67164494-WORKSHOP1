@@ -1,29 +1,46 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import SaLaPick from './SaLaPick'
-import { Link } from 'react-router-dom'
 
 const Signin = ({ isOpen = true, onClose = () => {} }) => {
+ 
   const [emailOrUsername, setEmailOrUsername] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
 
+  const navigate = useNavigate()
+
   if (!isOpen) return null
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log({ emailOrUsername, password, rememberMe })
-  }
+    
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        emailOrUsername: emailOrUsername,
+        password: password
+      })
 
+      // เก็บ token ไว้ใน localstorage
+      localStorage.setItem('token', response.data.token)
+      
+      onClose()
+      navigate('/mainpage')
+
+    } catch (error) {
+      console.error('Login Failed:', error.response?.data?.message || error.message)
+      alert(error.response?.data?.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
+    }
+  }
 
   return (
     <> 
       <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden' }}>
         
-
         <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
           <SaLaPick />
         </div>
-
 
         <div style={{
           position: 'fixed',
@@ -49,15 +66,15 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         border: 'none'}}>
         
 
-        <button onClick={onClose} type="button"
-        style={{ 
+        {/* <button onClick={onClose} type="button"
+        style={{ backgroundColor: 'transparent',
         position: 'absolute',
         top: '20px', right: '20px', 
         fontSize: '18px', color: '#333',
-        cursor: 'pointer', border: 'none', backgroundColor: 'transparent'
+        cursor: 'pointer', border: 'none', zIndex: 10000
         }}>
             ✕
-        </button>
+        </button> */}
 
         {/* โลโก้แบรนด์ */}
         <h2 className='fw-bold m-2'
@@ -94,7 +111,7 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
                 border: '1px solid #999', borderRadius: '4px',
                 padding: '10px 12px', fontSize: '14px', outline: 'none'}}/>
             </div>
-     
+    
             {/* password */}
             <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
                 
@@ -146,7 +163,7 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         </span>
 
         {/* ลิงก์ไปหน้าสมัครสมาชิก */}
-        <Link to='' className='text-decoration-none text-dark fw-bold use-42dot'>   
+        <Link to='signup' className='text-decoration-none text-dark fw-bold use-42dot'>   
             <button type="button"
             style={{ backgroundColor: 'transparent',
             color: '#000',  border: 'none',

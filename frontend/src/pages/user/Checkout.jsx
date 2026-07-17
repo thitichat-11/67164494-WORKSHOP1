@@ -2,16 +2,22 @@ import React from 'react'
 import Form from 'react-bootstrap/Form';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
+import { Link, useParams } from 'react-router-dom';
 
 
 const Checkout = () => {
+
+    const { id } = useParams()
+
     return (
         <div>
 
-            <div className="absolute top-24 left-8 flex items-center gap-2 cursor-pointer text-sm">
-                <i className="bi bi-arrow-left"></i>
-                <span className="font-semibold">BACK TO SHOP</span>
-            </div>
+            <Link to={`/pickitem/${id}`} className='text-decoration-none text-black'>    
+                <div className="absolute top-24 left-8 flex items-center gap-2 cursor-pointer text-sm">
+                    <i className="bi bi-arrow-left"></i>
+                    <span className="font-semibold">BACK TO SHOP</span>
+                </div>
+            </Link>
 
             <div className="flex justify-between items-start gap-40 w-full max-w-6xl mx-auto p-6">
 

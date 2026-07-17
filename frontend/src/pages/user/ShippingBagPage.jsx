@@ -175,7 +175,7 @@ const ShippingBagPage = () => {
                         CONTINUE SHOPPING
                     </Button>
                     
-                    <Button as={Link} to="/"
+                    <Button as={Link} to={`/checkout/${id}`}
                     variant="dark" 
                     className="rounded-0 py-2.5 fw-bold ext-decoration-none text-center w-100"
                     style={{ fontSize: '12px', letterSpacing: '1px' }}>
