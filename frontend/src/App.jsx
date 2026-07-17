@@ -54,6 +54,7 @@ const App = () => {
             <Route path="salapick" element={<SaLaPick />} />
             <Route path="wishlistpage" element={<WishlistPage />} />
             <Route path="/checkout/:id" element={<Checkout />} />
+            <Route path="signup" element={<Signup />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar และเปิดให้เข้าเฉพาะคนล็อกอินแล้วเท่านั้น */}
             <Route element={<ProtectedRoute />}>
@@ -62,7 +63,6 @@ const App = () => {
                 <Route path="accountpage" element={<AccountPage />} />
                 <Route path="personalinformation" element={<PersonalInformation />} />
                 <Route path="shippingaddress" element={<ShippingAddress />} />
-                <Route path="signup" element={<Signup />} />
               </Route>
             </Route>
           </Route>
