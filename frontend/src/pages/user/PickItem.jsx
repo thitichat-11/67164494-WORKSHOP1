@@ -239,20 +239,28 @@ const PickItem = () => {
                 <h2 className="fs-4 fw-normal mb-4" style={{ letterSpacing: '0.5px' }}>You may also like</h2>
                 <Row className="g-4">
                     {recommendedProducts.map((product) => (
-                        <Col key={product.id} xs={6} md={3} className="d-flex flex-column gap-2 position-relative">
-                            <div className="w-100" style={{ aspectRatio: '3/4', overflow: 'hidden' }}>
-                                <img src={product.image} alt={product.name} className="w-100 h-100 object-fit-cover" />
-                            </div>
-                            <div className="d-flex justify-content-between align-items-start mt-1">
-                                <span className="fw-semibold fst-italic" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#555' }}>
-                                    {product.tag}
-                                </span>
-                                <span style={{ cursor: 'pointer', fontSize: '14px' }}><i className="bi bi-heart"></i></span>
-                            </div>
-                            <h3 className="fw-normal m-0" style={{ fontSize: '12px', letterSpacing: '0.3px', lineHeight: '1.4' }}>
-                                {product.name}
-                            </h3>
-                            <span className="fw-bold" style={{ fontSize: '12px' }}>{product.price}</span>
+                        <Col key={product.id} xs={6} md={3} 
+                        className="d-flex flex-column gap-2 position-relative">
+                            
+                            <Link to={`/pickitem/${product.id}`} className="text-decoration-none text-dark">
+                                
+                                <div className="w-100" style={{ aspectRatio: '3/4', overflow: 'hidden' }}>
+                                    <img src={product.image} alt={product.name} className="w-100 h-100 object-fit-cover" />
+                                </div>
+                                
+                                <div className="d-flex justify-content-between align-items-start mt-1">
+                                    <span className="fw-semibold fst-italic" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#555' }}>
+                                        {product.tag}
+                                    </span>
+                                </div>
+                                
+                                <h3 className="fw-normal m-0" style={{ fontSize: '12px', letterSpacing: '0.3px', lineHeight: '1.4' }}>
+                                    {product.name}
+                                </h3>
+                                <span className="fw-bold" style={{ fontSize: '12px' }}>{product.price}</span>
+                                
+                            </Link>
+
                             <div className="d-flex justify-content-between align-items-center mt-auto pt-2">
                                 <div className="d-flex gap-1">
                                     {product.colors.map((color, index) => (

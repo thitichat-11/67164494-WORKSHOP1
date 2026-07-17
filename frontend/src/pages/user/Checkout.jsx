@@ -12,7 +12,7 @@ const Checkout = () => {
     return (
         <div>
 
-            <Link to={`/pickitem/${id}`} className='text-decoration-none text-black'>    
+            <Link to={`/pickitem/${id}`} className='text-decoration-none text-black'>
                 <div className="absolute top-24 left-8 flex items-center gap-2 cursor-pointer text-sm">
                     <i className="bi bi-arrow-left"></i>
                     <span className="font-semibold">BACK TO SHOP</span>
@@ -142,7 +142,11 @@ const Checkout = () => {
                                     type="text"
                                     id="inputphone"
                                     aria-describedby="phoneHelpBlock"
+                                    maxLength={10}
                                     required
+                                    onInput={(e) => {
+                                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                    }}
                                     style={{
                                         border: '0.5px solid rgba(0, 0, 0, 0.2)',
                                     }}

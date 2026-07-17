@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
 
 import PickItem from './PickItem'
 
@@ -11,22 +12,46 @@ const ShippingBagPage = () => {
 
   const [cartItems, setCartItems] = useState([])
 
+
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || []
-    setCartItems(savedCart)
+    const fetchCart = async () => {
+
+        try {
+            const userId = 1 // อิงตาม user_id ใน DB ของคุณ
+            const response = await axios.get(`http://localhost:5000/api/cart/${userId}`)
+            setCartItems(response.data)
+        } 
+        catch (error) {
+            console.error("Error fetching cart:", error)
+        }
+    }
+    fetchCart()
   }, [])
 
-  // ฟังก์ชันจัดการจำนวนสินค้าในตะกร้า
-  const updateQuantity = (index, change) => {
-    const updatedCart = [...cartItems]
-    updatedCart[index].qty += change
 
-    if (updatedCart[index].qty <= 0) {
-        updatedCart.splice(index, 1) // ลบออกถ้ากดลดจนเหลือ 0
+  // สำหรับเพิ่มลบสินค้าในตะกร้า
+  const updateQuantity = async (cart_id, change) => {
+    const itemToUpdate = cartItems.find(item => item.cart_id === cart_id) // ไปหาสินค้าตัวนี้
+    const newQuantity = itemToUpdate.quantity + change // คำนวณจำนวนใหม่
+
+    try {
+        await axios.put(`http://localhost:5000/api/cart/${cart_id}`, {
+            quantity: newQuantity
+        })
+
+        // ถ้ามันเพิ่มลบได้จริง ๆ ถึงจะ render
+        const updatedCart = cartItems.map(item => {
+            if (item.cart_id === cart_id) {
+                return { ...item, quantity: newQuantity }
+            }
+            return item
+        }).filter(item => item.quantity > 0)
+        
+        setCartItems(updatedCart)
+    } 
+    catch (error) {
+        console.error("บันทึกข้อมูลลง DB ไม่สำเร็จ:", error)
     }
-    
-    setCartItems(updatedCart)
-    localStorage.setItem('cart', JSON.stringify(updatedCart))
   }
 
   const handleClose = () => {
@@ -34,8 +59,8 @@ const ShippingBagPage = () => {
   }
 
   // คำนวณยอดรวมทั้งหมด
-  const subtotal = cartItems.reduce((acc, item) => acc + (Number(item.base_price) * item.qty), 0)
-  const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0)
+  const subtotal = cartItems.reduce((acc, item) => acc + (Number(item.base_price) * item.quantity), 0)
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0)
 
   return (
     <>
@@ -48,24 +73,22 @@ const ShippingBagPage = () => {
             </div>
 
             {/* ทำให้พื้นหลังมันมืด ๆ หน่อย */}
-            <div 
-                onClick={handleClose}
-                style={{position: 'fixed',
-                top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1040,
-                backgroundColor: 'rgba(0, 0, 0, 0.25)', cursor: 'pointer'}}
-            />
+            <div onClick={handleClose}
+            style={{position: 'fixed',
+            top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1040,
+            backgroundColor: 'rgba(0, 0, 0, 0.25)', cursor: 'pointer'}}/>
 
 
             {/* only แถบขาว */}
-            <div 
-                className="d-flex flex-column"
-                style={{
-                position: 'fixed', top: 0, right: 0,
-                height: '100vh', width: '450px',
-                zIndex: 1050, padding: '30px',
-                backgroundColor: '#FCFCF9', fontFamily: 'serif',
-                boxShadow: '-4px 0 25px rgba(0,0,0,0.1)'
-                }}>
+            <div className="d-flex flex-column"
+            style={{
+            position: 'fixed', top: 0, right: 0,
+            height: '100vh', width: '450px',
+            zIndex: 1050, padding: '30px',
+            backgroundColor: '#FCFCF9', fontFamily: 'serif',
+            boxShadow: '-4px 0 25px rgba(0,0,0,0.1)'
+            }}>
+
 
             
             {/* เนื้อหา */}
@@ -91,22 +114,26 @@ const ShippingBagPage = () => {
 
             <div className="flex-grow-1 overflow-auto pe-1">
                 {cartItems.length > 0 ? (
-                    cartItems.map((item, index) => (
-                        <div key={index} className="d-flex gap-3 align-items-start mb-4">
-                            <div style={{ width: '90px', aspectRatio: '3/4', overflow: 'hidden', border: '1px solid #f0f0f0' }}>
+                    cartItems.map((item) => (
+                        <div key={item.cart_id} className="d-flex gap-3 align-items-start mb-4">
+                            
+                            <div style={{ width: '90px', aspectRatio: '3/4', overflow: 'hidden', 
+                                border: '1px solid #f0f0f0' }}>
                                 <img className="w-100 h-100 object-fit-cover"
-                                    src={item.image} alt={item.name} />
+                                    src={item.img_url} alt={item.product_name} />
                             </div>
                             
                             <div className="d-flex flex-column gap-1">
+                                
                                 <span className="fw-semibold italic"
                                 style={{ fontSize: '10px', letterSpacing: '0.5px' }}>
-                                    {item.category_name || "New Arrivals"}
+                                    {/* category_name อาจต้อง join มาเพิ่มถ้าต้องการแสดง */}
+                                    New Arrivals 
                                 </span>
 
                                 <h6 className="m-0 fw-normal"
                                 style={{ fontSize: '13px', lineHeight: '1.2' }}>
-                                    {item.name}
+                                    {item.product_name}
                                 </h6>
 
                                 <span style={{ fontSize: '12px' }}>
@@ -116,17 +143,17 @@ const ShippingBagPage = () => {
                                 <div className="d-flex align-items-center border border-dark mt-2" style={{ width: 'fit-content', height: '24px' }}>
                                     <button className="border-0 bg-transparent px-2" 
                                     style={{ fontSize: '12px', cursor: 'pointer' }}
-                                    onClick={() => updateQuantity(index, -1)}>
+                                    onClick={() => updateQuantity(item.cart_id, -1)}>
                                         &minus;
                                     </button>
                                     
                                     <span className="px-2" style={{ fontSize: '12px', minWidth: '20px', textAlign: 'center' }}>
-                                        {item.qty}
+                                        {item.quantity}
                                     </span>
                                     
                                     <button className="border-0 bg-transparent px-2" 
                                     style={{ fontSize: '12px', cursor: 'pointer'}}
-                                    onClick={() => updateQuantity(index, 1)}>
+                                    onClick={() => updateQuantity(item.cart_id, 1)}>
                                         +
                                     </button>
                                 </div>

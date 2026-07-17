@@ -1,76 +1,66 @@
 import db from '../../Database/db.js';
 
-// 🐷 ดึงข้อมูลสินค้าที่ระบุเพื่อนำไปแสดงในตะกร้าช็อปปิ้ง
-export const getCartItemDetail = async (req, res) => {
-    const { id } = req.params // รับ id
+// ดึงข้อมูลมาโชว์
+export const getCartItems = async (req, res) => {
+    const { userId } = req.params // ดึง id จาก url
 
     try {
-        // ดึงข้อมูลสินค้า
-        const [products] = await db.query(`
-            SELECT p.product_id, p.name, p.base_price, c.category_name
-            FROM products p
-            LEFT JOIN categories c ON p.category_id = c.category_id
-            WHERE p.product_id = ?`, [id])
+        const query = 
+        `SELECT 
+            ci.cart_id, 
+            ci.quantity, 
+            p.name AS product_name, 
+            p.base_price, 
+            pv.variant_id, 
+            pv.color, 
+            pv.size,
+            pi.img_url
+        FROM cart_items ci
+        JOIN product_variants pv ON ci.variant_id = pv.variant_id
+        JOIN products p ON pv.product_id = p.product_id
+        LEFT JOIN product_images pi ON p.product_id = pi.product_id
+        WHERE ci.user_id = ?`
+        
+        // ยิงเข้า db ด้วย id ที่เราต้องการ
+        const [rows] = await db.query(query, [userId])
+        res.status(200).json(rows)
+    } 
+    catch (error) {
+        console.error("Error fetching cart:", error);
+        res.status(500).json({ message: "ดึงข้อมูลตะกร้าไม่สำเร็จ", error: error.message })
+    }
+}
 
-        // เช็คว่ามีสินค้ามั้ย
-        if (products.length === 0) {
-            return res.status(404).json({ message: "ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบ" })
+// อัพเดตจำนวนสินค้าในตะกร้า
+export const updateCartItemQuantity = async (req, res) => {
+    const { cart_id } = req.params // ดึง id จาก url
+    const { quantity } = req.body // ดึงจำนวนสินค้าในตะกร้ามา
+
+    try {
+        // ก็ถ้าของในตะกร้าเป็น 0 ก็ให้ลบไปเลย
+        if (quantity <= 0) {
+            await db.query(
+                `DELETE 
+                FROM cart_items 
+                WHERE cart_id = ?`
+                , [cart_id])
+            
+        // ส่งกลับ
+        res.status(200).json({ message: "Item removed" })
+        
+    } 
+        else {
+            // อัพเคตค่าจำนวนสินค้าในตะกร้า
+            await db.query(`
+                UPDATE cart_items 
+                SET quantity = ? 
+                WHERE cart_id = ?`
+                , [quantity, cart_id])
+
+            // ส่งกลับฟ้อนเอน
+            res.status(200).json({ message: "Quantity updated" })
         }
-
-        const product = products[0]
-
-        // ดึงมารูปมารูปนึง
-        let imageUrl = null
-        try {
-            const [images] = await db.query(
-                `SELECT img_url 
-                FROM product_images 
-                WHERE product_id = ? AND is_primary = 1
-                LIMIT 1`, [id])
-
-            if (images.length > 0) imageUrl = images[0].img_url
-            } 
-            catch (imgError) {
-                console.log("ตาราง product_images มีปัญหา หรือไม่มีคอลัมน์ img_url/is_primary:", imgError.message)
-            }
-
-        // ดึงตัวเลือกนางมาด้วย
-        let variantData = null
-        try {
-            const [variants] = await db.query(`
-                SELECT color, size, stock_quantity 
-                FROM product_variants 
-                WHERE product_id = ?
-                LIMIT 1`, [id])
-
-            // เช็คว่านางส่งมาแล้วจริง ๆ
-            if (variants.length > 0) {
-                variantData = {
-                    color: variants[0].color,
-                    size: variants[0].size,
-                    stock: variants[0].stock_quantity
-                }
-            }
-        } catch (variantError) {
-            console.log("ตาราง product_variants มีปัญหา หรือไม่มีคอลัมน์ stock_quantity:", variantError.message)
-            variantData = { color: "BROWN", size: "XS", stock: 5 } // อันนี้เผื่อพังจะได้มีโชว์
-        }
-
-        // ส่งข้อมูลกลับฟ้อนเอน
-        res.status(200).json({
-            id: product.product_id,
-            name: product.name,
-            price: product.base_price,
-            category: product.category_name,
-            image: imageUrl,
-            variant: variantData
-        })
-
     } catch (error) {
-        console.error("Error details:", error)
-        res.status(500).json({
-            message: "เกิดข้อผิดพลาดในการดึงข้อมูลสินค้าสำหรับตะกร้าช็อปปิ้ง",
-            error: error.message
-        })
+        res.status(500).json({ message: "Update failed", error: error.message })
     }
 }
