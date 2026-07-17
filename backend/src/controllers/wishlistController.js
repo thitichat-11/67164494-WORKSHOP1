@@ -1,6 +1,6 @@
 import pool from '../Config/db.js'; 
 
-// ดึงรายการ Wishlist ทั้งหมดของ User 
+// ดึงรายการ Wishlist ทั้งหมดของ User คนนั้น
 export const getWishlist = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -24,7 +24,7 @@ export const getWishlist = async (req, res) => {
   }
 };
 
-// เพิ่มสินค้าเข้า Wishlist 
+// เพิ่มสินค้าเข้า Wishlist (เช็คซ้ำให้ก่อนบันทึก)
 export const addToWishlist = async (req, res) => {
   try {
     const { user_id, product_id } = req.body;
