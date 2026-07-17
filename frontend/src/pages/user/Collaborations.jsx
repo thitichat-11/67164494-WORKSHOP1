@@ -14,10 +14,10 @@ const Collaborations = () => {
         </div>
 
         {/* รอรูปภาพก่อน */}
-        <div className='container text-center'
+        <div className='container text-center py-2'
         style={{width: '700px'}}>
             <img className='img-fluid w-100 object-fit-cover'
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe3WpPr8fNumHQEZ6tJBWUsdPlLKLs15Ars6YNEnqMLb0Gh_wv" alt="" />
+            src="https://pbs.twimg.com/media/Gtp3FJJaEAAD0dk.jpg" alt="" />
         </div>
 
         <div className='container text-center py-4'
