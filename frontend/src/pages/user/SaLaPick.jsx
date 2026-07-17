@@ -7,7 +7,7 @@ const SaLaPick = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // สมมติ user_id เป็น 1
+ 
   const currentUserId = 1;
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const SaLaPick = () => {
     fetchProducts();
   }, []);
 
-  // ฟังก์ชันเมื่อกดปุ่มหัวใจ 
+  // เมื่อกดปุ่มหัวใจ 
   const handleAddToWishlist = async (productId) => {
     try {
       const response = await fetch('http://localhost:5000/api/wishlist', {
