@@ -5,22 +5,18 @@ const SaLaPick = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
-  const handleProductClick = (productId) => {
-    navigate(`/pickitem/${productId}`)
-  }
+ 
+  const currentUserId = 1;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/salapicks'); 
-        
         if (!response.ok) {
           throw new Error('ไม่สามารถดึงข้อมูลสินค้าได้');
         }
-
         const data = await response.json();
         setProducts(data);
       } catch (err) {
@@ -33,6 +29,34 @@ const SaLaPick = () => {
 
     fetchProducts();
   }, []);
+
+  // เมื่อกดปุ่มหัวใจ 
+  const handleAddToWishlist = async (productId) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/wishlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          user_id: currentUserId, 
+          product_id: productId 
+        }),
+      });
+
+      console.log("Response Status:", response.status); 
+
+      if (response.ok) {
+        // แก้ไขจาก /wishlist เป็น /wishlistpage ให้ตรงกับ App.js
+        navigate('/wishlistpage');
+      } else {
+        const errorData = await response.json();
+        console.error('สาเหตุที่ไม่สามารถเพิ่มลง Wishlist ได้:', errorData);
+      }
+    } catch (err) {
+      console.error('Error adding to wishlist:', err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -56,13 +80,10 @@ const SaLaPick = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
           {products.map((product) => (
-            <div key={product.product_id || product.id} className="flex flex-col gap-2 group relative">
+            <div key={product.id} className="flex flex-col gap-2 group relative">
 
-              {/* รูปภาพสินค้า (สัดส่วน 3:4) */}
-              <div 
-                onClick={() => handleProductClick(product.id)}
-                className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer"
-              >
+              {/* รูปภาพสินค้า */}
+              <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">
                 {product.image ? (
                   <img
                     src={product.image}
@@ -82,7 +103,8 @@ const SaLaPick = () => {
                   {product.tag}
                 </span>
                 <button
-                  className="text-neutral-900 hover:opacity-50 transition-opacity"
+                  onClick={() => handleAddToWishlist(product.id)}
+                  className="text-neutral-900 hover:text-red-500 transition-colors p-1"
                   aria-label="Add to wishlist"
                 >
                   <svg
@@ -99,10 +121,7 @@ const SaLaPick = () => {
               </div>
 
               {/* ชื่อสินค้า */}
-              <h3 
-                onClick={() => handleProductClick(product.id)}
-                className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2"
-              >
+              <h3 className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2">
                 {product.name}
               </h3>
 
@@ -117,7 +136,7 @@ const SaLaPick = () => {
                   {product.colors && product.colors.map((color, idx) => (
                     <div
                       key={idx}
-                      className="border border-neutral-300 w-3 h-3 rounded-none"
+                      className="border border-neutral-300 w-3 h-3"
                       style={{ backgroundColor: color }}
                       title={`Color: ${color}`}
                     ></div>
@@ -137,13 +156,9 @@ const SaLaPick = () => {
           ))}
         </div>
 
-        {/* กรณีไม่มีสินค้า */}
         {products.length === 0 && (
           <div className="flex flex-col items-center gap-3 py-24 text-center">
             <p className="text-neutral-600 text-sm">ไม่มีสินค้าในขณะนี้</p>
-            <a href="#shop" className="text-neutral-900 font-bold text-[13px] underline underline-offset-4">
-              Continue shopping →
-            </a>
           </div>
         )}
 

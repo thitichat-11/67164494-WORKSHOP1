@@ -1,8 +1,8 @@
-import db from '../../Database/db.js'; 
+import db from "../../Database/db.js";
 
+//  ฟังก์ชันดึงข้อมูลสินค้าทั้งหมด
 export const getSaLaPicks = async (req, res) => {
   try {
-    // 1. คิวรีดึงข้อมูลสินค้า, หมวดหมู่ (tag), รูปภาพหลัก, และตัวเลือกสินค้า (สี, ไซส์)
     const [rows] = await db.query(`
       SELECT 
         p.product_id AS id,
@@ -18,40 +18,83 @@ export const getSaLaPicks = async (req, res) => {
       LEFT JOIN product_variants v ON p.product_id = v.product_id
     `);
 
-    // 2. จัดกลุ่มข้อมูล (Group by Product) เพื่อไม่ให้ข้อมูลสินค้าซ้ำกันเวลาแสดงผล
     const formattedItems = rows.reduce((acc, row) => {
-      let item = acc.find(i => i.id === row.id);
-      
-      // ถ้ายังไม่มีสินค้าชิ้นนี้ ให้สร้าง Object ใหม่
+      let item = acc.find((i) => i.id === row.id);
+
       if (!item) {
         item = {
           id: row.id,
-          tag: row.tag || 'New Arrivals',
+          tag: row.tag || "New Arrivals",
           name: row.name,
-          price: "$" + parseFloat(row.price).toFixed(2), 
-          image: row.image || '', 
+          price: "$" + parseFloat(row.price).toFixed(2),
+          image: row.image || "",
           colors: [],
-          sizes: []
+          sizes: [],
         };
         acc.push(item);
       }
 
-      // เพิ่มสีและไซส์เข้าไปใน Array โดยเช็คไม่ให้ค่าซ้ำ
       if (row.color && !item.colors.includes(row.color)) {
         item.colors.push(row.color);
       }
       if (row.size && !item.sizes.includes(row.size)) {
         item.sizes.push(row.size);
       }
-      
+
       return acc;
     }, []);
 
-    // 3. ส่งข้อมูลกลับไปให้ Frontend
     res.json(formattedItems);
-
   } catch (error) {
-    console.error('Error in getSaLaPicks:', error);
-    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลจาก Database' });
+    console.error("Error in getSaLaPicks:", error);
+    res
+      .status(500)
+      .json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลจาก Database" });
+  }
+};
+
+// เพิ่มสินค้าลง Wishlist (เมื่อกดปุ่มหัวใจ)
+export const addToWishlist = async (req, res) => {
+  try {
+    const { user_id, product_id } = req.body;
+
+    // เช็คว่าส่งข้อมูลมาครบไหม
+    if (!user_id || !product_id) {
+      return res
+        .status(400)
+        .json({ message: "ส่งข้อมูล user_id หรือ product_id ไม่ครบ" });
+    }
+
+    // บันทึกลงตาราง wishlist ตรวจชื่อตารางและคอลัมน์ให้ตรงกับ Database ของคุณ
+    await db.query("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)", [
+      user_id,
+      product_id,
+    ]);
+
+    res.status(201).json({ message: "เพิ่มลง Wishlist สำเร็จ" });
+  } catch (error) {
+    console.error("Error in addToWishlist:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการบันทึก Wishlist" });
+  }
+};
+
+// ดึงข้อมูล Wishlist เมื่อเปิดหน้า /wishlist
+export const getWishlist = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // ดึงข้อมูลสินค้าที่อยู่ใน wishlist ของ User คนนั้น
+    const [rows] = await db.query(
+      `SELECT w.product_id, p.name, p.base_price, p.category_id 
+       FROM wishlist w
+       JOIN products p ON w.product_id = p.product_id
+       WHERE w.user_id = ?`,
+      [userId],
+    );
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error in getWishlist:", error);
+    res.status(500).json({ message: "ดึงข้อมูล Wishlist ล้มเหลว" });
   }
 };

@@ -5,7 +5,7 @@ import axios from 'axios'
 
 const PickItem = () => {
     
-  const { id } = useParams() // ดึง product_id
+  const { id } = useParams() // ดึง id จาก url
   const navigate = useNavigate()
 
   const [product, setProduct] = useState(null)
@@ -40,6 +40,21 @@ const PickItem = () => {
         setLoading(false)
       })}, [id])
 
+  if (loading) {
+    return <Container className="py-5 text-center"><p>Loading...</p></Container>
+  }
+
+  if (!product) {
+    return <Container className="py-5 text-center"><p>Product not found</p></Container>
+  }
+
+  // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม
+  const uniqueColors = product.variants 
+    ? [...new Set(product.variants.map(v => JSON.stringify({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
+    : []
+  const uniqueSizes = product.variants 
+    ? [...new Set(product.variants.map(v => v.size))] 
+    : []
       
   // ก่อนจะเพิ่มสินค้าได้ก็ต้องเช็คก่อนว่ามี token มั้ย
   const handleAddToBag = () => {
@@ -50,28 +65,42 @@ const PickItem = () => {
       return
     }
 
+    // อันนี้คือดึงของเดิมจากในตะกร้ามาจาก localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || []
+
+    // กำหนด default สีกับ size ไว้ คิดเผื่อลูกค้านางไม่ยอมเลือก
+    const chosenColor = selectedColor || (uniqueColors[0] ? uniqueColors[0].name : null)
+    const chosenSize = selectedSize || (uniqueSizes[0] ? uniqueSizes[0] : null)
+
+    // เช็คของแบบเดียวกัน ก้คือ สี size รหัสสินค้า คือมีในตะกร้ารึยัง
+    const existingItem = cart.find(item => 
+        item.product_id === product.product_id && 
+        item.color === chosenColor && 
+        item.size === chosenSize
+    )
+    
+    if (existingItem) {
+        existingItem.qty += 1 // เจอของแบบเดิมก็บวกไปอีก
+    } 
+    // ถ้าไม่ซ้ำเดิมก็เพิ่มอันใหม่
+    else {
+        cart.push({ 
+            ...product, 
+            qty: 1, 
+            color: chosenColor, 
+            size: chosenSize,
+            image: product.images ? product.images[0].img_url : "" 
+        })
+    }
+    
+    // บันทึกไปว่าเออสรุปตะกร้ามันมีแบบนี้ ๆๆ นะ
+    localStorage.setItem('cart', JSON.stringify(cart))
     navigate(`/shippingbagpage/${product.product_id}`)
-  }
-
-  if (loading) {
-    return <Container className="py-5 text-center"><p>Loading...</p></Container>
-  }
-
-  if (!product) {
-    return <Container className="py-5 text-center"><p>Product not found</p></Container>
   }
 
   // ดึงรูปมาโชว์
   const img1 = product.images && product.images[0] ? product.images[0].img_url : "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"
   const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
-
-  // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม
-  const uniqueColors = product.variants 
-    ? [...new Set(product.variants.map(v => JSON.stringify({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
-    : []
-  const uniqueSizes = product.variants 
-    ? [...new Set(product.variants.map(v => v.size))] 
-    : []
 
   return (
     <>
@@ -133,9 +162,6 @@ const PickItem = () => {
                                 onClick={() => setSelectedColor(color.name)}
                             ></div>
                         ))}
-                        {uniqueColors.length === 0 && (
-                            <div className="border border-dark" style={{ width: '24px', height: '24px', backgroundColor: '#8B5A2B', cursor: 'pointer' }}></div>
-                        )}
                     </div>
                 </div>
 
@@ -159,14 +185,6 @@ const PickItem = () => {
                                 {size}
                             </Button>
                         ))}
-                        {uniqueSizes.length === 0 && (
-                            <>
-                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 fw-bold" style={{ fontSize: '12px', backgroundColor: '#D9D9D9' }}>XS</Button>
-                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" style={{ fontSize: '12px' }}>S</Button>
-                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" style={{ fontSize: '12px' }}>M</Button>
-                                <Button variant="outline-dark" className="rounded-0 px-2 py-1 border-0" style={{ fontSize: '12px' }}>L</Button>
-                            </>
-                        )}
                     </div>
                 </div>
 
@@ -180,10 +198,6 @@ const PickItem = () => {
                     >
                         ADD TO BAG
                     </Button>
-
-                    {/* <Button as={Link} to="/" variant="outline-dark" className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" style={{ fontSize: '12px', letterSpacing: '1px', backgroundColor: 'white' }}>
-                        SAVE ITEM
-                    </Button> */}
                 </div>
 
                 {/* รายละเอียดสินค้า */}
@@ -225,20 +239,28 @@ const PickItem = () => {
                 <h2 className="fs-4 fw-normal mb-4" style={{ letterSpacing: '0.5px' }}>You may also like</h2>
                 <Row className="g-4">
                     {recommendedProducts.map((product) => (
-                        <Col key={product.id} xs={6} md={3} className="d-flex flex-column gap-2 position-relative">
-                            <div className="w-100" style={{ aspectRatio: '3/4', overflow: 'hidden' }}>
-                                <img src={product.image} alt={product.name} className="w-100 h-100 object-fit-cover" />
-                            </div>
-                            <div className="d-flex justify-content-between align-items-start mt-1">
-                                <span className="fw-semibold fst-italic" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#555' }}>
-                                    {product.tag}
-                                </span>
-                                <span style={{ cursor: 'pointer', fontSize: '14px' }}><i className="bi bi-heart"></i></span>
-                            </div>
-                            <h3 className="fw-normal m-0" style={{ fontSize: '12px', letterSpacing: '0.3px', lineHeight: '1.4' }}>
-                                {product.name}
-                            </h3>
-                            <span className="fw-bold" style={{ fontSize: '12px' }}>{product.price}</span>
+                        <Col key={product.id} xs={6} md={3} 
+                        className="d-flex flex-column gap-2 position-relative">
+                            
+                            <Link to={`/pickitem/${product.id}`} className="text-decoration-none text-dark">
+                                
+                                <div className="w-100" style={{ aspectRatio: '3/4', overflow: 'hidden' }}>
+                                    <img src={product.image} alt={product.name} className="w-100 h-100 object-fit-cover" />
+                                </div>
+                                
+                                <div className="d-flex justify-content-between align-items-start mt-1">
+                                    <span className="fw-semibold fst-italic" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#555' }}>
+                                        {product.tag}
+                                    </span>
+                                </div>
+                                
+                                <h3 className="fw-normal m-0" style={{ fontSize: '12px', letterSpacing: '0.3px', lineHeight: '1.4' }}>
+                                    {product.name}
+                                </h3>
+                                <span className="fw-bold" style={{ fontSize: '12px' }}>{product.price}</span>
+                                
+                            </Link>
+
                             <div className="d-flex justify-content-between align-items-center mt-auto pt-2">
                                 <div className="d-flex gap-1">
                                     {product.colors.map((color, index) => (

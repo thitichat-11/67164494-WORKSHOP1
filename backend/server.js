@@ -7,6 +7,7 @@ import itemRouter from './src/Routes/itemRouter.js';
 import cartRoutes from './src/Routes/cartRoutes.js';
 import authRouter from './src/Routes/authRouter.js';
 import salapickRoutes from './src/Routes/salapickRoutes.js';
+import wishlistRoutes from './src/Routes/wishlistRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,7 +22,7 @@ app.use('/api/item', itemRouter);
 app.use('/api', cartRoutes);
 app.use('/api/auth', authRouter);
 app.use('/api/salapicks', salapickRoutes);
-
+app.use('/api/wishlist', wishlistRoutes);
 
 app.get('/', (req, res) => {
     res.send('SALA E-Commerce Backend API is running smoothly! 🚀');
