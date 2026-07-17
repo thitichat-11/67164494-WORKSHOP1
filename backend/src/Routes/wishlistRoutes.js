@@ -3,6 +3,7 @@ import db from '../../Database/db.js';
 
 const router = express.Router();
 
+// 1. ดึงรายการ Wishlist ทั้งหมดของ User คนนั้น พร้อม Join รูปและแท็ก
 router.get('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -29,6 +30,7 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+// 2. เพิ่มสินค้าเข้า Wishlist แบบตรวจจับการส่งข้อมูลและเช็คความซ้ำซ้อน
 router.post('/', async (req, res) => {
   try {
     const { user_id, product_id } = req.body;
@@ -53,6 +55,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+// 3. ลบสินค้าออกจาก Wishlist
 router.delete('/:userId/:productId', async (req, res) => {
   try {
     const { userId, productId } = req.params;
