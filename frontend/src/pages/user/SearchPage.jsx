@@ -125,15 +125,15 @@ const SearchPage = () => {
                         className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
-                    {/* ดีไซน์การแสดง รหัสสินค้า */}
+                    {/*รหัสสินค้า */}
                     <p className="mt-3 text-[10px] text-neutral-400 tracking-widest font-mono uppercase">
                       CODE: {product.product_code || "N/A"}
                     </p>
-                    {/* ดีไซน์การแสดง ชื่อสินค้า */}
+                    {/*ชื่อสินค้า */}
                     <p className="mt-1 text-sm font-semibold text-neutral-900 tracking-wide line-clamp-2">
                       {product.name}
                     </p>
-                    {/* ดีไซน์การแสดง ราคาสินค้า */}
+                    {/*ราคาสินค้า */}
                     <p className="mt-1 text-sm text-neutral-600 font-medium">
                       ฿{parseFloat(product.base_price).toLocaleString()}
                     </p>
