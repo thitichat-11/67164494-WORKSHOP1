@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SaLaPick = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate()
+
+  const handleProductClick = (productId) => {
+    navigate(`/pickitem/${productId}`)
+  }
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // อ้างอิง URL ตาม Backend ของคุณ
         const response = await fetch('http://localhost:5000/api/salapicks'); 
         
         if (!response.ok) {
@@ -50,10 +56,13 @@ const SaLaPick = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
           {products.map((product) => (
-            <div key={product.id} className="flex flex-col gap-2 group relative">
+            <div key={product.product_id || product.id} className="flex flex-col gap-2 group relative">
 
               {/* รูปภาพสินค้า (สัดส่วน 3:4) */}
-              <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">
+              <div 
+                onClick={() => handleProductClick(product.id)}
+                className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer"
+              >
                 {product.image ? (
                   <img
                     src={product.image}
@@ -90,7 +99,10 @@ const SaLaPick = () => {
               </div>
 
               {/* ชื่อสินค้า */}
-              <h3 className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2">
+              <h3 
+                onClick={() => handleProductClick(product.id)}
+                className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2"
+              >
                 {product.name}
               </h3>
 
