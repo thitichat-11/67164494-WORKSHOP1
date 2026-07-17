@@ -80,7 +80,7 @@ const SaLaPick = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
           {products.map((product) => (
-            <Link to={`/pickitem/${product.id}`} key={product.id} className="flex flex-col gap-2 group relative">
+            <Link to={`/pickitem/${product.id}`} key={product.id} className="flex flex-col gap-2 group relative text-decoration-none text-dark">
 
               {/* รูปภาพสินค้า */}
               <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">

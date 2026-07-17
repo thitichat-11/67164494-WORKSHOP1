@@ -12,7 +12,7 @@ export const verifyToken = (req, res, next) => {
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: "Token ไม่ถูกต้อง" })
         
-        // แปะข้อมูล User ลงไปใน req controller มันจะได้เอาไปใช้ต่อได้
+        // แปะข้อมูล user ลงไปใน req controller มันจะได้เอาไปใช้ต่อได้
         req.user = user
         next()
     })

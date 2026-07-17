@@ -23,7 +23,11 @@ const ShippingBagPage = () => {
         }
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/cart/${userId}`)
+            const token = localStorage.getItem('token')
+
+            const response = await axios.get(`http://localhost:5000/api/cart/${userId}`,{
+                headers: { Authorization: `Bearer ${token}` }
+            })
             setCartItems(response.data)
         } 
         catch (error) {
