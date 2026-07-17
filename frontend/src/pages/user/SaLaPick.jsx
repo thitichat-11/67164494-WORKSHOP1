@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const SaLaPick = () => {
   const [products, setProducts] = useState([]);
@@ -80,7 +80,7 @@ const SaLaPick = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
           {products.map((product) => (
-            <div key={product.id} className="flex flex-col gap-2 group relative">
+            <Link to={`/pickitem/${product.id}`} key={product.id} className="flex flex-col gap-2 group relative">
 
               {/* รูปภาพสินค้า */}
               <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">
@@ -152,7 +152,7 @@ const SaLaPick = () => {
                 </div>
               </div>
 
-            </div>
+            </Link>
           ))}
         </div>
 
