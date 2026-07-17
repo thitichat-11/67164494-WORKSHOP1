@@ -19,7 +19,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 
 app.use('/api/item', itemRouter);
-app.use('/api', cartRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/auth', authRouter);
 app.use('/api/salapicks', salapickRoutes);
 app.use('/api/wishlist', wishlistRoutes);

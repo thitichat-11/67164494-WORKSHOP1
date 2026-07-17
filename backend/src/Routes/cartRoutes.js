@@ -1,8 +1,9 @@
 import express from 'express';
-import { getCartItemDetail } from '../controllers/cartController.js';
+import { getCartItems, updateCartItemQuantity } from '../Controllers/cartController.js';
 
 const router = express.Router()
 
-router.get('/cart/item/:id', getCartItemDetail)
+router.get('/:userId', getCartItems)
+router.put('/:cart_id', updateCartItemQuantity)
 
 export default router
