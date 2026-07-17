@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 // page จากฝั่ง user
 import Collaborations from "./pages/user/Collaborations";
@@ -27,11 +27,22 @@ import Menu from "./components/Menu";
 import LayOut from "./components/LayOut";
 import Sidebar from "./components/SideBar";
 
+
+const ProtectedRoute = () => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    return <Navigate to="/signin" replace />
+  }
+  return <Outlet />
+}
+
 const App = () => {
   return (
     <div style={{ backgroundColor: "#FFFEF0" }}>
       <BrowserRouter basename="/SALA/">
         <Routes>
+          <Route path="" element={<Navigate to="mainpage" replace />} />
+
           <Route path="signin" element={<Signin />} />
           <Route path="searchpage" element={<SearchPage />} />
 
@@ -44,13 +55,15 @@ const App = () => {
             <Route path="wishlistpage" element={<WishlistPage />} />
             <Route path="/checkout/:id" element={<Checkout />} />
 
-            {/* route สำหรับหน้าที่ใช้ navbar และ sidebar */}
-            <Route element={<Sidebar />}>
-              <Route path="orderhistory" element={<OrderHistory />} />
-              <Route path="accountpage" element={<AccountPage />} />
-              <Route path="personalinformation" element={<PersonalInformation />} />
-              <Route path="shippingaddress" element={<ShippingAddress />} />
-              <Route path="signup" element={<Signup />} />
+            {/* route สำหรับหน้าที่ใช้ navbar และ sidebar และเปิดให้เข้าเฉพาะคนล็อกอินแล้วเท่านั้น */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Sidebar />}>
+                <Route path="orderhistory" element={<OrderHistory />} />
+                <Route path="accountpage" element={<AccountPage />} />
+                <Route path="personalinformation" element={<PersonalInformation />} />
+                <Route path="shippingaddress" element={<ShippingAddress />} />
+                <Route path="signup" element={<Signup />} />
+              </Route>
             </Route>
           </Route>
 

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react'
+import { Button } from 'react-bootstrap'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
 
-import PickItem from './PickItem';
+import PickItem from './PickItem'
 
 const ShippingBagPage = () => {
 

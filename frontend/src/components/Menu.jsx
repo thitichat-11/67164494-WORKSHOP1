@@ -1,10 +1,31 @@
 import React from 'react'
-import { NavLink, Outlet, useParams } from 'react-router-dom'
+import { NavLink, Outlet, useParams, useNavigate } from 'react-router-dom'
 
 const Menu = () => {
 
+    const navigate = useNavigate()
+
     const { id } = useParams() // ดึง id ปัจจุบันมา
     const activeId = id || 1   // แต่ถ้าไม่มีก็ให้เป็น 1
+
+    const isLoggedIn = !!localStorage.getItem('token')
+
+    const handleAccountClick = () => {
+        if (isLoggedIn) {
+        navigate('/accountpage')
+        } else {
+        navigate('/signin')
+        }
+    }
+
+    const handleBagClick = (e) => {
+        e.preventDefault() // หยุดไม่ให้ navlink มันทำงานทันที่เรากดไป คือให้เช็คก่อน
+        if (isLoggedIn) {
+            navigate(`/shippingbagpage/${activeId}`)
+        } else {
+            navigate('/signin')
+        }
+    }
 
     const getUnderLine = ({ isActive }) => {
         return `text-decoration-none text-dark m-0 d-inline-block pb-1 ${
@@ -21,17 +42,22 @@ const Menu = () => {
 
             <div className='position-absolute end-10 d-flex gap-2 align-items-center fs-6'>
                 
-                <NavLink to={`/shippingbagpage/${activeId}`} className='text-decoration-none text-dark'>   
+                <NavLink to={`/shippingbagpage/${activeId}`} 
+                onClick={handleBagClick} className='text-decoration-none text-dark'>   
                     <i className="bi bi-bag"></i>
                 </NavLink>
 
-                <NavLink to='wishlistpage' className='text-decoration-none text-dark'>   
+                <NavLink to='/wishlistpage' className='text-decoration-none text-dark'>   
                     <i className="bi bi-heart"></i>
                 </NavLink>
 
-                <NavLink to='searchpage' className='text-decoration-none text-dark'>   
+                <NavLink to='/searchpage' className='text-decoration-none text-dark'>   
                     <i className="bi bi-search"></i>
                 </NavLink>
+
+                {/* <span onClick={handleAccountClick} className='text-decoration-none text-dark' style={{ cursor: 'pointer' }}>
+                    <i className="bi bi-person"></i>
+                </span> */}
             </div>
         </div>
 

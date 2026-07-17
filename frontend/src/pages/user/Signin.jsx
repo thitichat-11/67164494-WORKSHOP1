@@ -66,7 +66,10 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         border: 'none'}}>
         
 
-        {/* <button onClick={onClose} type="button"
+        <button onClick={() => {
+            onClose()
+            navigate('/mainpage')}}
+        type="button"
         style={{ backgroundColor: 'transparent',
         position: 'absolute',
         top: '20px', right: '20px', 
@@ -74,7 +77,7 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         cursor: 'pointer', border: 'none', zIndex: 10000
         }}>
             ✕
-        </button> */}
+        </button>
 
         {/* โลโก้แบรนด์ */}
         <h2 className='fw-bold m-2'

@@ -9,11 +9,11 @@ const Sidebar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   const handleLogoutConfirm = () => {
+    localStorage.removeItem('token')
     setShowLogoutModal(false)
-    navigate('/')
+    navigate('/mainpage')
   }
 
-  // ฟังก์ชันคำนวณคลาสสีของแถบเมนู (เมื่อ Active จะเปลี่ยนเป็นแถบดำเต็มความกว้าง ตัวหนังสือขาว)
   const getMenuClass = ({ isActive }) => {
     return `text-decoration-none text-uppercase p-2 px-3 d-block w-100 ${
       isActive 
@@ -45,10 +45,10 @@ const Sidebar = () => {
 
               <div className="d-flex flex-column gap-1"
               style={{ fontSize: '11px', letterSpacing: '0.8px' }}>
-                <NavLink to='/' className={getMenuClass}>Overview</NavLink>
-                <NavLink to='/' className={getMenuClass}>Personal Information</NavLink>
+                <NavLink to='/accountpage' className={getMenuClass}>Overview</NavLink>
+                <NavLink to='/personalinformation' className={getMenuClass}>Personal Information</NavLink>
                 <NavLink to='/orderhistory' className={getMenuClass}>Order History</NavLink>
-                <NavLink to='/' className={getMenuClass}>Shipping Addresses</NavLink>
+                <NavLink to='/shippingaddress' className={getMenuClass}>Shipping Addresses</NavLink>
                 
                 <button onClick={() => setShowLogoutModal(true)}
                   className="border-0 bg-transparent text-start p-2 px-3 w-100" 
