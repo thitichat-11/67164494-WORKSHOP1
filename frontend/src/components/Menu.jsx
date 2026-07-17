@@ -55,9 +55,9 @@ const Menu = () => {
                     <i className="bi bi-search"></i>
                 </NavLink>
 
-                {/* <span onClick={handleAccountClick} className='text-decoration-none text-dark' style={{ cursor: 'pointer' }}>
+                <span onClick={handleAccountClick} className='text-decoration-none text-dark' style={{ cursor: 'pointer' }}>
                     <i className="bi bi-person"></i>
-                </span> */}
+                </span>
             </div>
         </div>
 

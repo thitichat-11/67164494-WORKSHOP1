@@ -19,13 +19,15 @@ const PickItem = () => {
     axios.get(`http://localhost:5000/api/item/${id}`) 
       .then(res => {
         const targetProduct = res.data
-        setProduct(targetProduct)
+        setProduct(targetProduct) // เก็บข้อมูลสินค้า
         
+        // เช็คว่าสินค้ามีข้อมูลใน db รึเปล่า
         if (targetProduct.variants && targetProduct.variants.length > 0) {
           setSelectedColor(targetProduct.variants[0].color) 
           setSelectedSize(targetProduct.variants[0].size)
         }
 
+        // รองรับชื่อตัวแปรสินค้าแนะนำทั้งสองแบบ (เผื่อการแก้ไขหลังบ้าน)
         if (targetProduct.recommendations) {
           setRecommendedProducts(targetProduct.recommendations)
         } 
@@ -48,59 +50,68 @@ const PickItem = () => {
     return <Container className="py-5 text-center"><p>Product not found</p></Container>
   }
 
-  // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม
+  // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม (new Set นางมีไว้เช็คของซ้ำ)
   const uniqueColors = product.variants 
-    ? [...new Set(product.variants.map(v => JSON.stringify({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
+    ? [...new Set(product.variants.map(v => JSON.stringify
+        ({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
     : []
   const uniqueSizes = product.variants 
     ? [...new Set(product.variants.map(v => v.size))] 
     : []
       
-  // ก่อนจะเพิ่มสินค้าได้ก็ต้องเช็คก่อนว่ามี token มั้ย
-  const handleAddToBag = () => {
-    const token = localStorage.getItem('token')
 
+  // เพิ่มสินค้า นังตัวปันหาา 💢
+  const handleAddToBag = async () => {
+    // รับมา
+    const token = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId') // ดึง userId ที่เก็บไว้ตอน Login
+
+    // ตระกูลเช็คก่อน
     if (!token) {
       navigate('/signin')
       return
     }
 
-    // อันนี้คือดึงของเดิมจากในตะกร้ามาจาก localStorage
-    let cart = JSON.parse(localStorage.getItem('cart')) || []
-
-    // กำหนด default สีกับ size ไว้ คิดเผื่อลูกค้านางไม่ยอมเลือก
-    const chosenColor = selectedColor || (uniqueColors[0] ? uniqueColors[0].name : null)
-    const chosenSize = selectedSize || (uniqueSizes[0] ? uniqueSizes[0] : null)
-
-    // เช็คของแบบเดียวกัน ก้คือ สี size รหัสสินค้า คือมีในตะกร้ารึยัง
-    const existingItem = cart.find(item => 
-        item.product_id === product.product_id && 
-        item.color === chosenColor && 
-        item.size === chosenSize
-    )
+    // ถ้าไม่ได้เลือก variants อะไรจะเลือกค่า default ลงตะกร้า
+    const finalColor = selectedColor || uniqueColors[0]?.name
+    const finalSize = selectedSize || uniqueSizes[0]
     
-    if (existingItem) {
-        existingItem.qty += 1 // เจอของแบบเดิมก็บวกไปอีก
-    } 
-    // ถ้าไม่ซ้ำเดิมก็เพิ่มอันใหม่
-    else {
-        cart.push({ 
-            ...product, 
-            qty: 1, 
-            color: chosenColor, 
-            size: chosenSize,
-            image: product.images ? product.images[0].img_url : "" 
-        })
+    // เอารหัสสินค้ามาแปะ
+    const variant = product.variants.find(v => v.color === finalColor && v.size === finalSize)
+    
+    if (!variant) {
+        return
     }
-    
-    // บันทึกไปว่าเออสรุปตะกร้ามันมีแบบนี้ ๆๆ นะ
-    localStorage.setItem('cart', JSON.stringify(cart))
-    navigate(`/shippingbagpage/${product.product_id}`)
-  }
+
+    try {
+        await axios.post('http://localhost:5000/api/item/add', {
+            userId: userId,
+            variant_id: variant.variant_id,
+            quantity: 1
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        navigate(`/shippingbagpage/${userId}`)
+    } 
+    catch (error) {
+        if (error.response) {
+            console.log("Error Detail:", error.response.data)
+            // alert(`เกิดข้อผิดพลาด: ${error.response.data.message || 'ไม่ทราบสาเหตุ'}`)
+        } else {
+            // alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์")
+        }
+    }
+    }
+
 
   // ดึงรูปมาโชว์
-  const img1 = product.images && product.images[0] ? product.images[0].img_url : "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"
-  const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
+  const img1 = 
+    // เช็คว่ามีรูปมั้ย และเป็นรูปแรกรึเปล่า
+    product.images && product.images[0]
+    // ถ้าไม่มีรูปแรกใน db ให้ใช้รูปสำรองนี้แทน
+    ? product.images[0].img_url : "https://cdn-images.farfetch-contents.com/29/66/49/29/29664929_58766828_1000.jpg"
+  
+   const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
 
   return (
     <>
@@ -190,12 +201,9 @@ const PickItem = () => {
 
                 {/* ปุ่มควบคุม */}
                 <div className="d-flex flex-column gap-2 mt-2 use-42dot">
-                    <Button 
-                        onClick={handleAddToBag} 
-                        variant="dark" 
-                        className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
-                        style={{ fontSize: '12px', letterSpacing: '1px' }}
-                    >
+                    <Button onClick={handleAddToBag} variant="dark" 
+                    className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
+                    style={{ fontSize: '12px', letterSpacing: '1px' }}>
                         ADD TO BAG
                     </Button>
                 </div>

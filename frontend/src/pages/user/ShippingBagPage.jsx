@@ -15,9 +15,14 @@ const ShippingBagPage = () => {
 
   useEffect(() => {
     const fetchCart = async () => {
+        const userId = localStorage.getItem('userId')
+
+        if (!userId) {
+            console.log("ยังไม่ได้ Login");
+            return;
+        }
 
         try {
-            const userId = 1 // อิงตาม user_id ใน DB ของคุณ
             const response = await axios.get(`http://localhost:5000/api/cart/${userId}`)
             setCartItems(response.data)
         } 

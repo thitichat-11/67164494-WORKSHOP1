@@ -22,8 +22,9 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         password: password
       })
 
-      // เก็บ token ไว้ใน localstorage
+      // เก็บ token กับ userid ไว้ใน localstorage
       localStorage.setItem('token', response.data.token)
+      localStorage.setItem('userId', response.data.user.id)
       
       onClose()
       navigate('/mainpage')
