@@ -114,11 +114,11 @@ const PickItem = () => {
 
 
     const handleAddToWishlist = async () => {
+        const token = localStorage.getItem('token')
         const userId = localStorage.getItem('userId')
         const productId = product.product_id;
 
-        if (!userId) {
-            alert("กรุณาล็อกอินก่อนบันทึกสินค้า")
+        if (!token || !userId) {
             navigate('/signin')
             return
         }
