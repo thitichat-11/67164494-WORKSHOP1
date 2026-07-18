@@ -178,3 +178,6 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
+
+/* หน้าเสิร์ช เสิร์ชรหัสสินค้าได้ ชื่อสินค้าได้  */
