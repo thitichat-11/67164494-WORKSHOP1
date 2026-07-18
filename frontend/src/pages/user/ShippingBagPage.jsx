@@ -44,8 +44,12 @@ const ShippingBagPage = () => {
     const newQuantity = itemToUpdate.quantity + change // คำนวณจำนวนใหม่
 
     try {
+        const token = localStorage.getItem('token')
+
         await axios.put(`http://localhost:5000/api/cart/${cart_id}`, {
             quantity: newQuantity
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
         })
 
         // ถ้ามันเพิ่มลบได้จริง ๆ ถึงจะ render
