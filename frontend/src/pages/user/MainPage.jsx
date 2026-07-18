@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const [salapicks, setSalapicks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const currentUserId = 1;
 
   useEffect(() => {
-    // ดึง userId จาก localStorage (ถ้าผู้ใช้ล็อกอินแล้ว)
     const userId = localStorage.getItem("userId") || "";
 
     const fetchSalapicks = async () => {
@@ -41,6 +43,33 @@ const MainPage = () => {
 
     fetchSalapicks();
   }, []);
+
+  //กดปุ่มหัวใจ เพิ่มลง Wishlist แล้วเด้งไปหน้า WishlistPage
+  const handleAddToWishlist = async (productId) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: currentUserId,
+          product_id: productId,
+        }),
+      });
+
+      console.log("Response Status:", response.status);
+
+      if (response.ok) {
+        navigate("/wishlistpage");
+      } else {
+        const errorData = await response.json();
+        console.error("สาเหตุที่ไม่สามารถเพิ่มลง Wishlist ได้:", errorData);
+      }
+    } catch (err) {
+      console.error("Error adding to wishlist:", err);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -108,9 +137,10 @@ const MainPage = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
               {salapicks.map((product) => (
-                <div
+                <Link
+                  to={`/pickitem/${product.id}`}
                   key={product.id}
-                  className="flex flex-col gap-2 group relative"
+                  className="flex flex-col gap-2 group relative text-decoration-none text-neutral-900"
                 >
                   <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">
                     <img
@@ -127,7 +157,12 @@ const MainPage = () => {
                     </span>
 
                     <button
-                      className={`${product.liked ? "text-red-500" : "text-neutral-900"} hover:opacity-50 transition-opacity`}
+                      onClick={(e) => {
+                        e.preventDefault(); // ป้องกันไม่ให้คลิกแล้วลิงก์ไปหน้าสินค้า
+                        e.stopPropagation(); // หยุดอีเวนต์ไม่ให้ส่งต่อไปยัง Link
+                        handleAddToWishlist(product.id);
+                      }}
+                      className={`${product.liked ? "text-red-500" : "text-neutral-900"} hover:text-red-500 hover:opacity-50 transition-all z-10 relative p-1`}
                       aria-label="Wishlist toggle"
                     >
                       {product.liked ? (
@@ -160,7 +195,7 @@ const MainPage = () => {
                   </div>
 
                   {/* ชื่อสินค้า */}
-                  <h3 className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer">
+                  <h3 className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2">
                     {product.name}
                   </h3>
 
@@ -194,7 +229,7 @@ const MainPage = () => {
                         ))}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
