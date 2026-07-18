@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Signin from "./Signin";
 
 const MainPage = () => {
   const [salapicks, setSalapicks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const currentUserId = 1;
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId") || "";
@@ -28,7 +29,6 @@ const MainPage = () => {
             typeof item.sizes === "string"
               ? JSON.parse(item.sizes)
               : item.sizes || [],
-          // default fallback เผื่อไม่มีรูป
           image:
             item.image || "https://via.placeholder.com/300x400?text=No+Image",
         }));
@@ -44,8 +44,26 @@ const MainPage = () => {
     fetchSalapicks();
   }, []);
 
-  //กดปุ่มหัวใจ เพิ่มลง Wishlist แล้วเด้งไปหน้า WishlistPage
-  const handleAddToWishlist = async (productId) => {
+  // กดปุ่มหัวใจ เพิ่มลง Wishlist
+
+  const handleAddToWishlist = async (e, productId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const currentUserId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+
+    // เช็คสิทธิ์ ถ้าไม่มีให้เปิด Pop-up Signin
+    if (
+      !currentUserId ||
+      currentUserId === "null" ||
+      !token ||
+      token === "null"
+    ) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:5000/api/wishlist", {
         method: "POST",
@@ -72,7 +90,7 @@ const MainPage = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/*  SALA Spring/Summer 2026   */}
       <div
         className="relative flex flex-col items-center justify-end h-screen bg-gray-800 bg-cover bg-top pb-16"
@@ -82,16 +100,13 @@ const MainPage = () => {
         }}
       >
         <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-
         <div className="relative z-10 flex flex-col items-center">
           <h1 className="text-xl md:text-base text-white mb-1">
             SALA Spring/Summer 2026
           </h1>
-
           <h2 className="text-2xl md:text-4xl text-white mb-4 tracking-wide">
             IN HER OWN LANGUAGE
           </h2>
-
           <Link
             to="/seemoreinher"
             className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
@@ -110,16 +125,13 @@ const MainPage = () => {
         }}
       >
         <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-
         <div className="relative z-10 flex flex-col items-center">
           <h1 className="text-xl md:text-base text-white mb-1 tracking-widest">
             SALA
           </h1>
-
           <h2 className="text-2xl md:text-4xl text-white mb-4 tracking-widest">
             SPRING SUMMER 2026
           </h2>
-
           <Link
             to="/seemorespring"
             className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
@@ -157,11 +169,8 @@ const MainPage = () => {
                     </span>
 
                     <button
-                      onClick={(e) => {
-                        e.preventDefault(); // ป้องกันไม่ให้คลิกแล้วลิงก์ไปหน้าสินค้า
-                        e.stopPropagation(); // หยุดอีเวนต์ไม่ให้ส่งต่อไปยัง Link
-                        handleAddToWishlist(product.id);
-                      }}
+                      // ส่งค่า และ product.id เข้าไปให้ handleAddToWishlist
+                      onClick={(e) => handleAddToWishlist(e, product.id)}
                       className={`${product.liked ? "text-red-500" : "text-neutral-900"} hover:text-red-500 hover:opacity-50 transition-all z-10 relative p-1`}
                       aria-label="Wishlist toggle"
                     >
@@ -194,12 +203,9 @@ const MainPage = () => {
                     </button>
                   </div>
 
-                  {/* ชื่อสินค้า */}
                   <h3 className="font-normal text-[15px] tracking-wide text-neutral-950 leading-snug cursor-pointer line-clamp-2">
                     {product.name}
                   </h3>
-
-                  {/* ราคา */}
                   <span
                     className="font-bold"
                     style={{ fontSize: "14px", color: "#000000" }}
@@ -207,7 +213,6 @@ const MainPage = () => {
                     {product.price}
                   </span>
 
-                  {/* สี และ ไซส์ */}
                   <div className="flex justify-between items-center mt-auto pt-2 ">
                     <div className="flex gap-1">
                       {product.colors &&
@@ -219,7 +224,6 @@ const MainPage = () => {
                           ></div>
                         ))}
                     </div>
-
                     <div className="flex gap-2 text-[10px] text-neutral-400 font-medium tracking-wider">
                       {product.sizes &&
                         product.sizes.map((size, idx) => (
@@ -245,16 +249,13 @@ const MainPage = () => {
         }}
       >
         <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-
         <div className="relative z-10 flex flex-col items-center">
           <h1 className="text-xl md:text-base text-white mb-1 tracking-widest">
             SALA
           </h1>
-
           <h2 className="text-2xl md:text-4xl text-white mb-4 tracking-widest">
             SPRING SUMMER 2026
           </h2>
-
           <Link
             to="/salapick"
             className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
@@ -263,6 +264,12 @@ const MainPage = () => {
           </Link>
         </div>
       </div>
+
+      {/*Signin Modal*/}
+      <Signin
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </div>
   );
 };
