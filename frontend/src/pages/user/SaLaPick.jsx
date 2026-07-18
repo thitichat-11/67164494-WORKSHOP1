@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import Signin from "./Signin";
 
 const SaLaPick = () => {
   const [products, setProducts] = useState([]);
@@ -7,15 +8,14 @@ const SaLaPick = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
- 
-  const currentUserId = 1;
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/salapicks'); 
+        const response = await fetch("http://localhost:5000/api/salapicks");
         if (!response.ok) {
-          throw new Error('ไม่สามารถดึงข้อมูลสินค้าได้');
+          throw new Error("ไม่สามารถดึงข้อมูลสินค้าได้");
         }
         const data = await response.json();
         setProducts(data);
@@ -30,31 +30,46 @@ const SaLaPick = () => {
     fetchProducts();
   }, []);
 
-  // เมื่อกดปุ่มหัวใจ 
-  const handleAddToWishlist = async (productId) => {
+  // เมื่อกดปุ่มหัวใจ
+  const handleAddToWishlist = async (e, productId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const currentUserId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+
+    if (
+      !currentUserId ||
+      currentUserId === "null" ||
+      !token ||
+      token === "null"
+    ) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:5000/api/wishlist', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/api/wishlist", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          user_id: currentUserId, 
-          product_id: productId 
+        body: JSON.stringify({
+          user_id: currentUserId,
+          product_id: productId,
         }),
       });
 
-      console.log("Response Status:", response.status); 
+      console.log("Response Status:", response.status);
 
       if (response.ok) {
-        // แก้ไขจาก /wishlist เป็น /wishlistpage ให้ตรงกับ App.js
-        navigate('/wishlistpage');
+        navigate("/wishlistpage");
       } else {
         const errorData = await response.json();
-        console.error('สาเหตุที่ไม่สามารถเพิ่มลง Wishlist ได้:', errorData);
+        console.error("สาเหตุที่ไม่สามารถเพิ่มลง Wishlist ได้:", errorData);
       }
     } catch (err) {
-      console.error('Error adding to wishlist:', err);
+      console.error("Error adding to wishlist:", err);
     }
   };
 
@@ -75,13 +90,15 @@ const SaLaPick = () => {
   }
 
   return (
-    <div className="min-h-screen text-neutral-900 font-sans">
+    <div className="min-h-screen text-neutral-900 font-sans relative">
       <div className="max-w-[1200px] mx-auto px-4 py-12">
-
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12">
           {products.map((product) => (
-            <Link to={`/pickitem/${product.id}`} key={product.id} className="flex flex-col gap-2 group relative text-decoration-none text-dark">
-
+            <Link
+              to={`/pickitem/${product.id}`}
+              key={product.id}
+              className="flex flex-col gap-2 group relative text-decoration-none text-dark"
+            >
               {/* รูปภาพสินค้า */}
               <div className="w-full aspect-[3/4] overflow-hidden bg-neutral-100 cursor-pointer">
                 {product.image ? (
@@ -103,8 +120,8 @@ const SaLaPick = () => {
                   {product.tag}
                 </span>
                 <button
-                  onClick={() => handleAddToWishlist(product.id)}
-                  className="text-neutral-900 hover:text-red-500 transition-colors p-1"
+                  onClick={(e) => handleAddToWishlist(e, product.id)}
+                  className="text-neutral-900 hover:text-red-500 transition-colors p-1 relative z-10"
                   aria-label="Add to wishlist"
                 >
                   <svg
@@ -133,25 +150,25 @@ const SaLaPick = () => {
               {/* สี และ ไซส์ */}
               <div className="flex justify-between items-center mt-auto pt-2">
                 <div className="flex gap-1">
-                  {product.colors && product.colors.map((color, idx) => (
-                    <div
-                      key={idx}
-                      className="border border-neutral-300 w-3 h-3"
-                      style={{ backgroundColor: color }}
-                      title={`Color: ${color}`}
-                    ></div>
-                  ))}
+                  {product.colors &&
+                    product.colors.map((color, idx) => (
+                      <div
+                        key={idx}
+                        className="border border-neutral-300 w-3 h-3"
+                        style={{ backgroundColor: color }}
+                        title={`Color: ${color}`}
+                      ></div>
+                    ))}
                 </div>
-
                 <div className="flex gap-2 text-[10px] text-neutral-400 font-medium tracking-wider">
-                  {product.sizes && product.sizes.map((size, idx) => (
-                    <span key={idx} className="text-neutral-700">
-                      {size}
-                    </span>
-                  ))}
+                  {product.sizes &&
+                    product.sizes.map((size, idx) => (
+                      <span key={idx} className="text-neutral-700">
+                        {size}
+                      </span>
+                    ))}
                 </div>
               </div>
-
             </Link>
           ))}
         </div>
@@ -161,10 +178,21 @@ const SaLaPick = () => {
             <p className="text-neutral-600 text-sm">ไม่มีสินค้าในขณะนี้</p>
           </div>
         )}
-
       </div>
+
+      {/*Signin Modal*/}
+      <Signin
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </div>
   );
 };
 
 export default SaLaPick;
+
+/* วอวอคนที่น่ารักที่สุดในโลกทำการลิสต์*/
+/* มีการสร้างtable products เข้าไปในฐานข้อมูล แล้วก็ มีการสร้างtable wishlist เข้าไปด้วย  */
+/* มีการใช้ลูปในการแสดงสินค้าในหน้า SaLaPick */
+/* สีกับไซต์มีการกำหนดไว้ในข้อมูลสินค้า มีการเชื่อมต่อกับฐานข้อมูล */
+
