@@ -113,6 +113,49 @@ const PickItem = () => {
   
    const img2 = product.images && product.images[1] ? product.images[1].img_url : "https://pbs.twimg.com/media/F_VlGB9WsAA_dws.jpg"
 
+
+    const handleAddToWishlist = async () => {
+        const userId = localStorage.getItem('userId')
+        const productId = product.product_id;
+
+        if (!userId) {
+            alert("กรุณาล็อกอินก่อนบันทึกสินค้า")
+            navigate('/signin')
+            return
+        }
+        
+        if (!productId) {
+            console.error("ไม่พบ product_id ในสินค้าตัวนี้:", product)
+            alert("เกิดข้อผิดพลาด: ไม่พบรหัสสินค้า")
+            return
+        }
+
+        try {
+        const response = await fetch('http://localhost:5000/api/wishlist', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ 
+            user_id: userId, 
+            product_id: productId 
+            }),
+        })
+
+        if (response.ok) {
+            navigate('/wishlistpage')
+        } 
+        else {
+            const errorData = await response.json()
+            alert(`บันทึกไม่สำเร็จ: ${errorData.message || 'เกิดข้อผิดพลาด'}`)
+        }
+        } catch (err) {
+        console.error('Error adding to wishlist:', err)
+        alert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้")
+        }
+}
+
   return (
     <>
         {/* กล่องใหญ่ */}
@@ -205,6 +248,12 @@ const PickItem = () => {
                     className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
                     style={{ fontSize: '12px', letterSpacing: '1px' }}>
                         ADD TO BAG
+                    </Button>
+
+                    <Button onClick={handleAddToWishlist} variant="outline-dark" 
+                    className="rounded-0 py-2.5 fw-bold text-decoration-none text-center" 
+                    style={{ fontSize: '12px', letterSpacing: '1px' }}>
+                        SAVE ITEM
                     </Button>
                 </div>
 
