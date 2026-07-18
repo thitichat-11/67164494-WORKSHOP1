@@ -109,7 +109,7 @@ const MainPage = () => {
           </h2>
           <Link
             to="/seemoreinher"
-            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
+            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider text-decoration-none"
           >
             SEE MORE
           </Link>
@@ -134,7 +134,7 @@ const MainPage = () => {
           </h2>
           <Link
             to="/seemorespring"
-            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
+            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider text-decoration-none"
           >
             SEE MORE
           </Link>
@@ -258,7 +258,7 @@ const MainPage = () => {
           </h2>
           <Link
             to="/salapick"
-            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider"
+            className="bg-[#D9D9D9] text-black py-2 px-2 text-xs font-bold tracking-wider text-decoration-none"
           >
             SEE MORE
           </Link>
