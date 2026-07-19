@@ -84,7 +84,7 @@ const PersonalInformation = () => {
       alert(response.data.message);
 
     } catch (error) {
-      alert(error.response?.data?.message || 'Information saved successfully');
+      alert(error.response?.data?.message || 'Data saving failed. Please try again.');
     } finally {
       setSaving(false);
     }
