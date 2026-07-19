@@ -18,7 +18,7 @@ import Checkout from "./pages/user/Checkout";
 import AccountPage from "./pages/user/AccountPage";
 import PersonalInformation from "./pages/user/ProsonalInformation";
 import ShippingAddress from "./pages/user/ShippingAddess";
-import Signup from "./pages/user/Singup";
+import Signup from "./pages/user/Signup";
 import Signin from "./pages/user/Signin";
 import OrderSuccess from "./pages/user/OrderSuccess";
 

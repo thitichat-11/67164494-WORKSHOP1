@@ -11,6 +11,7 @@ import wishlistRoutes from './src/Routes/wishlistRoutes.js';
 import searchRoutes from './src/Routes/searchRoutes.js'; 
 import checkoutRouter from './src/Routes/checkoutRouter.js';
 import accountRouter from './src/Routes/accountRouter.js';
+import singupRouter from './src/Routes/singupRouter.js';
 
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/api/salapicks', salapickRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/accounts', accountRouter);
+app.use('/api/signup', singupRouter);
 
 // เรียกดูรูปสลิปผ่าน URL ได้ เช่น http://localhost:5000/uploads/payment-slips/ชื่อไฟล์.png
 app.use('/uploads', express.static('uploads'));

@@ -1,12 +1,59 @@
 import React from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
 
 
 
 const Signup = () => {
+
+
+  //เอาพวกที่ต้องเก็บมาไว้ใน formdata
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    birthdate: '',
+    phonenumber: '',
+    username: '',
+    email: '',
+    password: ''
+  })
+
+
+  const navigate = useNavigate()
+
+
+  // handler กลางตัวเดียว ใช้ได้กับทุกช่อง เพราะอิงจาก name ของ input
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+
+      const response = await axios.post('http://localhost:5000/api/signup', formData);
+      alert(response.data.message);
+      navigate('/signin'); // เปลี่ยนเส้นทางไปยังหน้า signin  หลังจากสมัครสมาชิกสำเร็จ
+
+    } catch (error) {
+
+      console.error('Signup Failed:', error.response?.data?.message || error.message)
+      alert(error.response?.data?.message || 'Signup failed. Please try again.');
+
+    }
+  }
+
+
+
   return (
-    <div className='w-full max-w-2xl items-start gap-4 p-4 mx-auto'>
+    <Form onSubmit={handleSubmit} className='w-full max-w-2xl items-start gap-4 p-4 mx-auto'>
 
       <h2
         style={{ fontFamily: "'42dot Sans', sans-serif", fontWeight: 'regular' }}
@@ -30,6 +77,9 @@ const Signup = () => {
             id="inputfirstname"
             aria-describedby="firstnameHelpBlock"
             required
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
             style={{
               border: '0.5px solid rgba(0, 0, 0, 0.2)',
             }}
@@ -47,6 +97,9 @@ const Signup = () => {
             id="inputlastname"
             aria-describedby="lastnameHelpBlock"
             required
+            name="last_name"
+            value={formData.last_name}
+            onChange={handleChange}
             style={{
               border: '0.5px solid rgba(0, 0, 0, 0.2)',
             }}
@@ -71,6 +124,9 @@ const Signup = () => {
             id="inputbirthdate"
             aria-describedby="birthdateHelpBlock"
             required
+            name="birthdate"
+            value={formData.birthdate}
+            onChange={handleChange}
             style={{
               border: '0.5px solid rgba(0, 0, 0, 0.2)',
             }}
@@ -86,20 +142,49 @@ const Signup = () => {
           <Form.Control
             type="text"
             id="inputPhonenumber"
+            name="phonenumber"
+            value={formData.phonenumber}
             maxLength={10}
+            onChange={(e) => {
+              // เอา regex เดิมมาเก็บลง state แทนการแก้ e.target.value ตรงๆ
+              const onlyNums = e.target.value.replace(/[^0-9]/g, '');
+              setFormData({ ...formData, phonenumber: onlyNums });
+            }}
             aria-describedby="PhonenumberHelpBlock"
             required
-            // ดักจับทุกครั้งที่มีการพิมพ์ ถ้าไม่ใช่เลข 0-9 ให้เคลียร์ทิ้งทันที
-            onInput={(e) => {
-              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            }}
-            style={{
-              border: '0.5px solid rgba(0, 0, 0, 0.2)',
-            }}
+            style={{ border: '0.5px solid rgba(0, 0, 0, 0.2)' }}
           />
         </div>
 
       </div>
+
+
+
+
+      {/* กล่อง username */}
+      <div className='mt-2'>
+
+        <Form.Label htmlFor="inputusername" className="m-0 text-sm font-medium">
+          USERNAME <span className="text-danger">*</span>
+        </Form.Label>
+        <Form.Control
+          type="text"
+          id="inputusername"
+          aria-describedby="usernameHelpBlock"
+          required
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          style={{
+            border: '0.5px solid rgba(0, 0, 0, 0.2)',
+          }}
+        />
+
+      </div>
+
+
+
+
 
 
       {/* กล่อง email */}
@@ -113,6 +198,9 @@ const Signup = () => {
           id="inputemail"
           aria-describedby="emailHelpBlock"
           required
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
           style={{
             border: '0.5px solid rgba(0, 0, 0, 0.2)',
           }}
@@ -133,6 +221,9 @@ const Signup = () => {
           id="inputpassword"
           aria-describedby="passwordHelpBlock"
           required
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           style={{
             border: '0.5px solid rgba(0, 0, 0, 0.2)',
           }}
@@ -143,8 +234,9 @@ const Signup = () => {
 
 
       <Button
+        type="submit"
         style={{
-          width: '100%' ,
+          width: '100%',
           backgroundColor: 'black',
           borderColor: 'black',
           marginTop: '56px',
@@ -160,7 +252,7 @@ const Signup = () => {
 
 
 
-    </div>
+    </Form>
   )
 }
 

@@ -176,7 +176,7 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         </span>
 
         {/* ลิงก์ไปหน้าสมัครสมาชิก */}
-        <Link to='signup' className='text-decoration-none text-dark fw-bold use-42dot'>   
+        <Link to='/signup' className='text-decoration-none text-dark fw-bold use-42dot'>   
             <button type="button"
             style={{ backgroundColor: 'transparent',
             color: '#000',  border: 'none',
