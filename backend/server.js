@@ -14,6 +14,7 @@ import accountRouter from './src/Routes/accountRouter.js';
 import singupRouter from './src/Routes/singupRouter.js';
 
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,6 +31,8 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/accounts', accountRouter);
 app.use('/api/signup', singupRouter);
+
+
 
 // เรียกดูรูปสลิปผ่าน URL ได้ เช่น http://localhost:5000/uploads/payment-slips/ชื่อไฟล์.png
 app.use('/uploads', express.static('uploads'));
