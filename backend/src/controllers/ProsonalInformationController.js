@@ -8,7 +8,8 @@ export const ProsonalInformation = async (req, res) => {
         const userId = req.user.id;
 
         const [rows] = await db.query(
-            `SELECT first_name, last_name, email, phonenumber, birthdate
+            `SELECT first_name, last_name, email, phonenumber, birthdate , phonenumber, birthdate, role_id, created_at,
+                country_region, house_number_street, apartment_suite_unit, town_city, state_province, postcode_zip
              FROM users
              WHERE user_id = ?`,
             [userId]
@@ -44,10 +45,12 @@ export const EditProsonalInformation = async (req, res) => {
         const userId = req.user.id;
 
         // รับมาเฉพาะ field ที่อนุญาตให้แก้ได้ ป้องกันคนส่ง field แปลกๆ เช่น role_id มาแก้เอง
-        const { first_name, last_name, email, username, phonenumber, birthdate } = req.body;
+        const {
+            first_name, last_name, email, username, phonenumber, birthdate,
+            country_region, house_number_street, apartment_suite_unit,
+            town_city, state_province, postcode_zip
+        } = req.body;
 
-
-        /// เก็บ field ที่ user ส่งมาจริงๆ ไว้ใน object เดียว (ใช้ Object.entries กรองค่า undefined ออก)
         const fieldsToUpdate = {};
         if (first_name !== undefined) fieldsToUpdate.first_name = first_name;
         if (last_name !== undefined) fieldsToUpdate.last_name = last_name;
@@ -55,6 +58,12 @@ export const EditProsonalInformation = async (req, res) => {
         if (username !== undefined) fieldsToUpdate.username = username;
         if (phonenumber !== undefined) fieldsToUpdate.phonenumber = phonenumber;
         if (birthdate !== undefined) fieldsToUpdate.birthdate = birthdate;
+        if (country_region !== undefined) fieldsToUpdate.country_region = country_region;
+        if (house_number_street !== undefined) fieldsToUpdate.house_number_street = house_number_street;
+        if (apartment_suite_unit !== undefined) fieldsToUpdate.apartment_suite_unit = apartment_suite_unit;
+        if (town_city !== undefined) fieldsToUpdate.town_city = town_city;
+        if (state_province !== undefined) fieldsToUpdate.state_province = state_province;
+        if (postcode_zip !== undefined) fieldsToUpdate.postcode_zip = postcode_zip;
 
 
         // ไม่ส่งอะไรมาแก้เลย

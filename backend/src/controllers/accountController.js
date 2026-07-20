@@ -8,9 +8,10 @@ export const accountOverview = async (req, res) => {
 
         // ดึงข้อมูลบัญชีของผู้ใช้จากฐานข้อมูล
         const [rows] = await db.query(
-            `SELECT user_id, first_name, last_name, email, username, phonenumber, birthdate, role_id, created_at
-             FROM users
-             WHERE user_id = ?`,
+            `SELECT 
+                user_id, first_name, last_name, email, username
+            FROM users
+            WHERE user_id = ?`,
             [userId]
         );
 
@@ -80,7 +81,7 @@ export const getMyOrders = async (req, res) => {
     } catch (error) {
 
         console.error('Get Orders Error:', error);
-        return res.status(500).json({ message: 'Internal server error , please try again later'});
+        return res.status(500).json({ message: 'Internal server error , please try again later' });
 
     }
 
