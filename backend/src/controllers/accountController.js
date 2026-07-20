@@ -46,7 +46,7 @@ export const getMyOrders = async (req, res) => {
         const [orders] = await db.query(
             `SELECT order_id, total_price, status, created_at
              FROM orders
-             WHERE user_id = ? AND status IN ('pending', 'completed')
+             WHERE user_id = ? AND status IN ('pending', 'completed' , 'cancelled', 'refunded')
              ORDER BY created_at DESC`,
             [userId]
         );

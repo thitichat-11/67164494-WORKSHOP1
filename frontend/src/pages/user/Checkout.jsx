@@ -371,8 +371,8 @@ const Checkout = () => {
 
 
                     <div className="mt-6">
-                        <Form.Label>
-                            แนบหลักฐานการโอนเงิน <span className="text-danger">*</span>
+                        <Form.Label className="d-flex align-items-center gap-2 mt-5 fs-3">
+                            Proof of payment <span className="text-danger">*</span>
                         </Form.Label>
                         <Form.Control
                             type="file"

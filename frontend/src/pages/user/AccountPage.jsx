@@ -10,6 +10,15 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+
+  const statusStyles = {
+    completed: { bg: '#d4edda', color: '#155724' },
+    pending: { bg: '#fff3cd', color: '#856404' },
+    cancelled: { bg: '#f8d7da', color: '#721c24' },
+    refunded: { bg: '#e2e3e5', color: '#383d41' },
+  };
+
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -88,8 +97,8 @@ const AccountPage = () => {
               padding: '4px 12px',
               borderRadius: '12px',
               fontSize: '13px',
-              backgroundColor: order.status === 'completed' ? '#d4edda' : '#fff3cd',
-              color: order.status === 'completed' ? '#155724' : '#856404'
+              backgroundColor: statusStyles[order.status]?.bg || '#fff3cd',
+              color: statusStyles[order.status]?.color || '#856404'
             }}>
               {order.status}
             </span>
@@ -108,15 +117,15 @@ const AccountPage = () => {
                 style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }}
               />
               <div style={{ textAlign: 'left', flex: 1 }}>
-                <div>สี: {item.color} {item.size ? `/ ไซส์: ${item.size}` : ''}</div>
-                <div>จำนวน: {item.quantity}</div>
+                <div>Color: {item.color} {item.size ? `/ Size: ${item.size}` : ''}</div>
+                <div>Qty: {item.quantity}</div>
               </div>
-              <div style={{ fontWeight: 'bold' }}>{item.price} ฿</div>
+              <div style={{ fontWeight: 'bold' }}>{item.price} $</div>
             </div>
           ))}
 
           <div style={{ textAlign: 'right', marginTop: '12px', fontWeight: 'bold' }}>
-            ยอดรวม: {order.total_price} ฿
+            TOTAL : {order.total_price} $
           </div>
 
         </div>
