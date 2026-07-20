@@ -13,6 +13,7 @@ import checkoutRouter from './src/Routes/checkoutRouter.js';
 import accountRouter from './src/Routes/accountRouter.js';
 import singupRouter from './src/Routes/singupRouter.js';
 import userRouter from './src/Routes/userRoutes.js'
+import orderRoutes from './src/Routes/orderRoutes.js';
 
 
 
@@ -33,6 +34,7 @@ app.use('/api/checkout', checkoutRouter);
 app.use('/api/accounts', accountRouter);
 app.use('/api/signup', singupRouter);
 app.use('/api/users', userRouter)
+app.use('/api/orders', orderRoutes);
 
 
 // เรียกดูรูปสลิปผ่าน URL ได้ เช่น http://localhost:5000/uploads/payment-slips/ชื่อไฟล์.png
