@@ -4,7 +4,7 @@ import AdminProfile from "./admin-ui/AdminProfile";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip, PieChart, Pie, Cell,
-  LineChart, Line, Legend, Area, AreaChart
+  LineChart, Line, Legend, Area, AreaChart, Label
 } from "recharts";
 import {
   fetchDashboardStats,
@@ -317,7 +317,9 @@ const AdminDashboard = () => {
                 contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px", backgroundColor: "#fff" }}
                 formatter={(v) => [`฿${v.toLocaleString()}`, "ยอดขาย"]}
               />
-              <Bar dataKey="sales" fill="#CAB18B" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="sales" fill="#CAB18B" radius={[6, 6, 0, 0]}>
+                <Label dataKey="sales" position="top" formatter={(v) => `฿${v.toLocaleString()}`} fill="#1A1714" fontSize={11} fontWeight={500} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

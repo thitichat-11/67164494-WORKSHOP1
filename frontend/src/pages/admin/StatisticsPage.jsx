@@ -3,7 +3,7 @@ import AdminProfile from "./admin-ui/AdminProfile";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip, LineChart, Line,
-  PieChart, Pie, Cell, Legend, AreaChart, Area
+  PieChart, Pie, Cell, Legend, AreaChart, Area, Label
 } from "recharts";
 import {
   fetchDashboardStats,
@@ -168,13 +168,7 @@ const StatisticsPage = () => {
             ยอดขายรายสัปดาห์
           </div>
           <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={salesData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-              <defs>
-                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#CAB18B" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#CAB18B" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
+            <BarChart data={salesData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
               <CartesianGrid vertical={false} stroke="#f0ede8" />
               <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#888" }} />
               <YAxis hide />
@@ -183,8 +177,10 @@ const StatisticsPage = () => {
                 contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px", backgroundColor: "#fff" }}
                 formatter={(v) => [`฿${v.toLocaleString()}`, "ยอดขาย"]}
               />
-              <Area type="monotone" dataKey="sales" stroke="#CAB18B" fillOpacity={1} fill="url(#colorSales)" />
-            </AreaChart>
+              <Bar dataKey="sales" fill="#CAB18B" radius={[6, 6, 0, 0]}>
+                <Label dataKey="sales" position="top" formatter={(v) => `฿${v.toLocaleString()}`} fill="#1A1714" fontSize={11} fontWeight={500} />
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
