@@ -110,3 +110,110 @@ export const createProduct = async (req, res) => {
         connection.release();
     }
 };
+
+// 1. UPDATE PRODUCT (PUT /api/products/:id)
+// ==========================================
+export const updateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { category_id, name, description, base_price, variants, images } = req.body;
+
+    const connection = await db.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        // 1. อัปเดตข้อมูลตารางหลัก products
+        const updateProductSql = `
+            UPDATE products 
+            SET category_id = ?, name = ?, description = ?, base_price = ? 
+            WHERE product_id = ?
+        `;
+        await connection.query(updateProductSql, [category_id || null, name, description || null, base_price, id]);
+
+        // 2. อัปเดตข้อมูลตัวเลือกสินค้า (Variants)
+        if (variants && variants.length > 0) {
+            for (const variant of variants) {
+                if (variant.variant_id) {
+                    // กรณีแก้ไข Variant เดิมที่มีอยู่แล้ว
+                    const updateVariantSql = `
+                        UPDATE product_variants 
+                        SET color = ?, size = ?, code = ?, stock_quantity = ?
+                        WHERE variant_id = ? AND product_id = ?
+                    `;
+                    await connection.query(updateVariantSql, [
+                        variant.color,
+                        variant.size,
+                        variant.code,
+                        variant.stock_quantity || 0,
+                        variant.variant_id,
+                        id
+                    ]);
+                } else {
+                    // กรณีเพิ่ม Variant ตัวใหม่เข้ามาระหว่างอัปเดต
+                    const insertVariantSql = `
+                        INSERT INTO product_variants (product_id, color, size, code, stock_quantity)
+                        VALUES (?, ?, ?, ?, ?)
+                    `;
+                    await connection.query(insertVariantSql, [
+                        id,
+                        variant.color,
+                        variant.size,
+                        variant.code,
+                        variant.stock_quantity || 0
+                    ]);
+                }
+            }
+        }
+
+        // 3. อัปเดตข้อมูลรูปภาพ (Images)
+        if (images && images.length > 0) {
+            for (const image of images) {
+                if (image.image_id) {
+                    const updateImageSql = `
+                        UPDATE product_images 
+                        SET img_url = ?, is_primary = ?
+                        WHERE image_id = ? AND product_id = ?
+                    `;
+                    await connection.query(updateImageSql, [image.img_url, image.is_primary || 0, image.image_id, id]);
+                } else {
+                    const insertImageSql = `
+                        INSERT INTO product_images (product_id, img_url, is_primary)
+                        VALUES (?, ?, ?)
+                    `;
+                    await connection.query(insertImageSql, [id, image.img_url, image.is_primary || 0]);
+                }
+            }
+        }
+
+        await connection.commit();
+        res.status(200).json({ message: "อัปเดตข้อมูลสินค้าสำเร็จเรียบร้อย ✏️" });
+
+    } catch (error) {
+        await connection.rollback();
+        res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดตสินค้า", error: error.message });
+    } finally {
+        connection.release();
+    }
+};
+
+
+// 2. DELETE PRODUCT (DELETE /api/products/:id)
+// ==========================================
+export const deleteProduct = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // ด้วย Foreign Key ON DELETE CASCADE ใน Database ชุดใหม่ 
+        // การลบในตาราง products จะลบรูปภาพ, variants และ wishlists ที่เกี่ยวข้องให้เองอัตโนมัติ
+        const [result] = await db.query('DELETE FROM products WHERE product_id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "ไม่พบสินค้าที่ต้องการลบ" });
+        }
+
+        res.status(200).json({ message: "ลบสินค้าสำเร็จเรียบร้อย 🗑️" });
+
+    } catch (error) {
+        res.status(500).json({ message: "เกิดข้อผิดพลาดในการลบสินค้า", error: error.message });
+    }
+};

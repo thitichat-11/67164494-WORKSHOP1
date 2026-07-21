@@ -41,11 +41,23 @@ const ShippingBagPage = () => {
   // สำหรับเพิ่มลบสินค้าในตะกร้า
   const updateQuantity = async (cart_id, change) => {
     const itemToUpdate = cartItems.find(item => item.cart_id === cart_id) // ไปหาสินค้าตัวนี้
+    if (!itemToUpdate) return
+
     const newQuantity = itemToUpdate.quantity + change // คำนวณจำนวนใหม่
 
+    // อันนี้เช้คที่แบคเอนแต่เช้คฟ้อนอีกทีกันเหนียว
+    if (change > 0 && newQuantity > itemToUpdate.stock_quantity) {
+        alert(`ไม่สามารถเพิ่มสินค้าได้มากกว่านี้ (ขออภัย สินค้าในสต็อกมีจำกัดเพียง ${itemToUpdate.stock_quantity} ชิ้น)`)
+        return
+    }
+
     try {
+        const token = localStorage.getItem('token')
+
         await axios.put(`http://localhost:5000/api/cart/${cart_id}`, {
             quantity: newQuantity
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
         })
 
         // ถ้ามันเพิ่มลบได้จริง ๆ ถึงจะ render
@@ -59,7 +71,10 @@ const ShippingBagPage = () => {
         setCartItems(updatedCart)
     } 
     catch (error) {
-        console.error("บันทึกข้อมูลลง DB ไม่สำเร็จ:", error)
+        // error message จากหลังบ้าน
+        const errMsg = error.response?.data?.message || "บันทึกข้อมูลลง DB ไม่สำเร็จ"
+        alert(errMsg)
+        console.error("Error updating quantity:", error)
     }
   }
 
@@ -161,7 +176,10 @@ const ShippingBagPage = () => {
                                     </span>
                                     
                                     <button className="border-0 bg-transparent px-2" 
-                                    style={{ fontSize: '12px', cursor: 'pointer'}}
+                                    style={{ fontSize: '12px', cursor: item.quantity >= item.stock_quantity ? 'not-allowed' : 'pointer',
+                                        opacity: item.quantity >= item.stock_quantity ? 0.5 : 1 // ทำสีจางลงเมื่อกดไม่ได้
+                                    }}
+                                    disabled={item.quantity >= item.stock_quantity}
                                     onClick={() => updateQuantity(item.cart_id, 1)}>
                                         +
                                     </button>

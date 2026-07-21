@@ -1,6 +1,6 @@
 import db from "../../Database/db.js";
 
-//  ฟังก์ชันดึงข้อมูลสินค้าทั้งหมด
+/*ดึงข้อมูลสินค้าทั้งหมด*/
 export const getSaLaPicks = async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -53,7 +53,7 @@ export const getSaLaPicks = async (req, res) => {
   }
 };
 
-// เพิ่มสินค้าลง Wishlist (เมื่อกดปุ่มหัวใจ)
+/* เพิ่มสินค้าลง Wishlist (เมื่อกดปุ่มหัวใจ) */
 export const addToWishlist = async (req, res) => {
   try {
     const { user_id, product_id } = req.body;
@@ -78,12 +78,12 @@ export const addToWishlist = async (req, res) => {
   }
 };
 
-// ดึงข้อมูล Wishlist เมื่อเปิดหน้า /wishlist
+/* ดึงข้อมูล Wishlist เมื่อเปิดหน้า /wishlist */
 export const getWishlist = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // ดึงข้อมูลสินค้าที่อยู่ใน wishlist ของ User คนนั้น
+    /* ดึงข้อมูลสินค้าที่อยู่ใน wishlist ของ User คนนั้น */
     const [rows] = await db.query(
       `SELECT w.product_id, p.name, p.base_price, p.category_id 
        FROM wishlist w

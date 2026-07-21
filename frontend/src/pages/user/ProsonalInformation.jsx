@@ -1,9 +1,103 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
 
 
 const PersonalInformation = () => {
+
+
+  //ตัวรับข้อมูล
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phonenumber: '',
+    birthdate: ''
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // ดึงข้อมูลมาแสดงตอนเปิดหน้า
+  useEffect(() => {
+    const fetchInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+
+        const response = await axios.get('http://localhost:5000/api/accounts/personal-information', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const user = response.data.user;
+
+        setFormData({
+          first_name: user.first_name || '',
+          last_name: user.last_name || '',
+          email: user.email || '',
+          phonenumber: user.phonenumber || '',
+          // MySQL ส่ง DATE มาเป็น ISO string เช่น "2000-01-01T00:00:00.000Z"
+          // <input type="date"> ต้องการแค่ "2000-01-01" เลยต้อง split เอาส่วนหน้า
+          birthdate: user.birthdate ? user.birthdate.split('T')[0] : ''
+        });
+
+      } catch (error) {
+        console.error('Fetch Personal Info Error:', error.response?.data?.message || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInfo();
+  }, []);
+
+
+  //เมื่อแก้ข้อมูล (ทำของทรศแยก)
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+
+  //เปลี่ยนเบอร์
+  const handlePhoneChange = (e) => {
+    const onlyNums = e.target.value.replace(/[^0-9]/g, '');
+    setFormData({ ...formData, phonenumber: onlyNums });
+  };
+
+
+
+  // save
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.patch(
+        'http://localhost:5000/api/accounts/personal-information',
+        formData, // ส่งไปได้เลยทั้งก้อน backend รองรับแบบ partial update อยู่แล้ว
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert(response.data.message);
+
+    } catch (error) {
+      alert(error.response?.data?.message || 'Data saving failed. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '60px' }}>Loading...</div>;
+  }
+
+
+
+
+
   return (
     <div>
 
@@ -53,6 +147,9 @@ const PersonalInformation = () => {
                   id="inputfirstname"
                   aria-describedby="firstnameHelpBlock"
                   required
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
                   style={{
                     border: '0.5px solid rgba(0, 0, 0, 0.2)',
                   }}
@@ -70,6 +167,9 @@ const PersonalInformation = () => {
                   id="inputlastname"
                   aria-describedby="lastnameHelpBlock"
                   required
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
                   style={{
                     border: '0.5px solid rgba(0, 0, 0, 0.2)',
                   }}
@@ -90,6 +190,9 @@ const PersonalInformation = () => {
                 id="inputemail"
                 aria-describedby="emailHelpBlock"
                 required
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 style={{
                   border: '0.5px solid rgba(0, 0, 0, 0.2)',
                 }}
@@ -113,6 +216,10 @@ const PersonalInformation = () => {
                   id="inputphonenumber"
                   aria-describedby="phonenumberHelpBlock"
                   required
+                  name="phonenumber"
+                  value={formData.phonenumber}
+                  maxLength={10}
+                  onChange={handlePhoneChange}
                   style={{
                     border: '0.5px solid rgba(0, 0, 0, 0.2)',
                   }}
@@ -130,6 +237,9 @@ const PersonalInformation = () => {
                   id="inputbirthdate"
                   aria-describedby="birthdateHelpBlock"
                   required
+                  name="birthdate"
+                  value={formData.birthdate}
+                  onChange={handleChange}
                   style={{
                     border: '0.5px solid rgba(0, 0, 0, 0.2)',
                   }}
@@ -142,8 +252,10 @@ const PersonalInformation = () => {
               <Button
                 variant="dark"
                 className="px-8 py-2.5 text-sm font-medium tracking-wide"
-                style={{ minWidth: '340px' , fontFamily: "'42dot Sans', sans-serif", fontWeight: 'regular' , fontSize: '13px' }} >
-                SAVE PROFILE
+                onClick={handleSave}
+                disabled={saving}
+                style={{ minWidth: '340px', fontFamily: "'42dot Sans', sans-serif", fontWeight: 'regular', fontSize: '13px' }} >
+                {saving ? 'SAVING...' : 'SAVE PROFILE'}
               </Button>
             </div>
 

@@ -21,13 +21,20 @@ export const login = async (req, res) => {
             `SELECT users.*, roles.role_name 
              FROM users 
              JOIN roles ON users.role_id = roles.role_id 
-             WHERE users.username = ? OR users.email = ?`,[emailOrUsername, emailOrUsername])
+             WHERE users.username = ? OR users.email = ?`, [emailOrUsername, emailOrUsername])
 
         if (users.length === 0) {
             return res.status(404).json({ message: 'ไม่พบผู้ใช้นี้ในระบบ' })
         }
 
         const user = users[0]
+
+        //  เพิ่มจุดนี้: ตรวจสอบสถานะบัญชี หากถูกระงับ (suspended) จะบล็อกทันที
+        if (user.status === 'suspended') {
+            return res.status(403).json({ 
+                message: 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ ' 
+            })
+        }
 
         // ตรวจสอบรหัสผ่าน
         const isMatch = await bcrypt.compare(password, user.password)
@@ -51,7 +58,9 @@ export const login = async (req, res) => {
                 id: user.user_id,
                 username: user.username,
                 email: user.email,
-                role: user.role_name
+                role: user.role_name,
+                role_id: user.role_id,
+                status: user.status //  แถม status ส่งกลับไปให้หน้าบ้านเผื่อใช้โชว์
             }
         })
 

@@ -18,8 +18,9 @@ import Checkout from "./pages/user/Checkout";
 import AccountPage from "./pages/user/AccountPage";
 import PersonalInformation from "./pages/user/ProsonalInformation";
 import ShippingAddress from "./pages/user/ShippingAddess";
-import Signup from "./pages/user/Singup";
+import Signup from "./pages/user/Signup";
 import Signin from "./pages/user/Signin";
+import OrderSuccess from "./pages/user/OrderSuccess";
 
 // Admin pages
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -64,6 +65,7 @@ const App = () => {
             <Route path="wishlistpage" element={<WishlistPage />} />
             <Route path="/checkout/:id" element={<Checkout />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="order-success/:order_id" element={<OrderSuccess />} />
 
             {/* route สำหรับหน้าที่ใช้ navbar และ sidebar และเปิดให้เข้าเฉพาะคนล็อกอินแล้วเท่านั้น */}
             <Route element={<ProtectedRoute />}>

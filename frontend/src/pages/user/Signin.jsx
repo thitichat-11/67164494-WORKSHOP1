@@ -22,9 +22,18 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         password: password
       })
 
+      const roleId = String(response.data.user.role_id)
+
+      if (roleId === '2') {
+        alert("Admin login is not allowed here. 😉😋😏")
+        navigate('/mainpage')
+        return
+      }
+
       // เก็บ token กับ userid ไว้ใน localstorage
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('userId', response.data.user.id)
+      localStorage.setItem('roleId', roleId)
       
       onClose()
       navigate('/mainpage')
@@ -167,7 +176,7 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
         </span>
 
         {/* ลิงก์ไปหน้าสมัครสมาชิก */}
-        <Link to='signup' className='text-decoration-none text-dark fw-bold use-42dot'>   
+        <Link to='/signup' className='text-decoration-none text-dark fw-bold use-42dot'>   
             <button type="button"
             style={{ backgroundColor: 'transparent',
             color: '#000',  border: 'none',

@@ -52,9 +52,8 @@ const PickItem = () => {
 
   // ไม่ให้ size กับ สี มันโชว์ซ้ำในสิ่งเดิม (new Set นางมีไว้เช็คของซ้ำ)
   const uniqueColors = product.variants 
-    ? [...new Set(product.variants.map(v => JSON.stringify
-        ({ name: v.color, code: v.code })))].map(str => JSON.parse(str)) 
-    : []
+  ? [...new Set(product.variants.map(v => v.color))] 
+  : []
   const uniqueSizes = product.variants 
     ? [...new Set(product.variants.map(v => v.size))] 
     : []
@@ -73,7 +72,7 @@ const PickItem = () => {
     }
 
     // ถ้าไม่ได้เลือก variants อะไรจะเลือกค่า default ลงตะกร้า
-    const finalColor = selectedColor || uniqueColors[0]?.name
+    const finalColor = selectedColor || uniqueColors[0]
     const finalSize = selectedSize || uniqueSizes[0]
     
     // เอารหัสสินค้ามาแปะ
@@ -115,11 +114,11 @@ const PickItem = () => {
 
 
     const handleAddToWishlist = async () => {
+        const token = localStorage.getItem('token')
         const userId = localStorage.getItem('userId')
         const productId = product.product_id;
 
-        if (!userId) {
-            alert("กรุณาล็อกอินก่อนบันทึกสินค้า")
+        if (!token || !userId) {
             navigate('/signin')
             return
         }
@@ -199,21 +198,21 @@ const PickItem = () => {
                 {/* เลือกสี */}
                 <div className="d-flex flex-column gap-2">
                     <span className="fw-semibold" style={{ fontSize: '13px' }}>
-                    Color:&nbsp; {selectedColor || 'Brown'}
+                    Color:&nbsp; {selectedColor || uniqueColors[0] || 'None'}
                     </span>
                     <div className="d-flex gap-2">
                         {uniqueColors.map((color, index) => (
                             <div 
                                 key={index}
-                                className={`border ${selectedColor === color.name ? 'border-dark' : 'border-secondary'}`}
+                                className={`border ${selectedColor === color ? 'border-dark' : 'border-secondary'}`}
                                 style={{ 
                                     width: '24px', 
                                     height: '24px', 
-                                    backgroundColor: color.name.startsWith('#') ? color.name : '#8B5A2B', 
+                                    backgroundColor: color,
                                     cursor: 'pointer',
-                                    outline: selectedColor === color.name ? '1px solid black' : 'none'
+                                    outline: selectedColor === color ? '1px solid black' : 'none'
                                 }}
-                                onClick={() => setSelectedColor(color.name)}
+                                onClick={() => setSelectedColor(color)}
                             ></div>
                         ))}
                     </div>
