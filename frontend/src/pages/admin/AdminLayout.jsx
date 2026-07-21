@@ -32,8 +32,8 @@ const AdminLayout = ({ children }) => {
         {/* Top: Logo + Nav */}
         <div>
           <div style={{ marginBottom: "40px" }}>
-            <div style={{ fontSize: "22px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.08em" }}>SALA</div>
-            <div style={{ fontSize: "10px", color: "#6b5e50", letterSpacing: "0.22em", marginTop: "4px" }}>ATELIER ADMIN</div>
+            <div style={{ fontSize: "22px", fontWeight: 700, color: "#ffffff", letterSpacing: "0.08em", fontFamily: "'Lora', serif" }}>SALA</div>
+            <div style={{ fontSize: "10px", color: "#6b5e50", letterSpacing: "0.22em", marginTop: "4px", fontFamily: "'Lora', serif" }}>ATELIER ADMIN</div>
           </div>
 
           <nav style={{ display: "flex", flexDirection: "column", gap: "4px" }}>

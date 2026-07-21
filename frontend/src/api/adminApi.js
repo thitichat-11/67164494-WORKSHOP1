@@ -106,94 +106,52 @@ export async function updateOrderStatus(orderId, payload) {
 
 // ---------- Dashboard ----------
 export async function fetchDashboardStats() {
-  try {
-    const res = await adminApi.get("/api/dashboard/stats");
-    return res.data;
-  } catch {
-    // Fallback: calculate from orders
-    const orders = await fetchOrders();
-    const customers = await fetchCustomers();
-    return {
-      totalRevenue: orders.reduce((sum, o) => sum + (parseInt(o.total_price) || 0), 0),
-      monthlyRevenue: orders
-        .filter(o => new Date(o.created_at).getMonth() === new Date().getMonth())
-        .reduce((sum, o) => sum + (parseInt(o.total_price) || 0), 0),
-      revenueChange: "+0%",
-      todayOrders: orders.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString()).length,
-      ordersChange: "0%",
-      totalCustomers: customers.length,
-      newCustomersThisMonth: customers.filter(c => new Date(c.created_at).getMonth() === new Date().getMonth()).length,
-      totalProducts: 0,
-      outOfStockProducts: 0,
-      pendingOrders: orders.filter(o => o.status === 'pending').length,
-      lowStockProducts: 0,
-    };
-  }
+  const res = await adminApi.get("/api/dashboard/stats");
+  return res.data;
 }
 
 export async function fetchSalesData(period = "week") {
-  try {
-    const res = await adminApi.get(`/api/dashboard/sales?period=${period}`);
-    return res.data;
-  } catch {
-    return { data: [], total: 0 };
-  }
+  const res = await adminApi.get(`/api/dashboard/sales?period=${period}`);
+  return res.data;
 }
 
 export async function fetchOrderStatus() {
-  try {
-    const res = await adminApi.get("/api/dashboard/order-status");
-    return res.data;
-  } catch {
-    const orders = await fetchOrders();
-    const statusMap = {};
-    const colorMap = {
-      'pending': { name: 'Processing', color: '#CAB18B' },
-      'shipped': { name: 'Shipped', color: '#3C7741' },
-      'delivered': { name: 'Delivered', color: '#2D612A' },
-      'cancelled': { name: 'Cancelled', color: '#A73937' }
-    };
-
-    orders.forEach(o => {
-      const status = o.status || 'pending';
-      const displayName = colorMap[status]?.name || status;
-      statusMap[displayName] = (statusMap[displayName] || 0) + 1;
-    });
-
-    const data = Object.entries(statusMap).map(([name, value]) => ({
-      name,
-      value,
-      color: Object.values(colorMap).find(c => c.name === name)?.color || '#999'
-    }));
-
-    return {
-      data,
-      total: orders.length
-    };
-  }
+  const res = await adminApi.get("/api/dashboard/order-status");
+  return res.data;
 }
 
 export async function fetchRecentOrders() {
-  try {
-    const res = await adminApi.get("/api/dashboard/recent-orders");
-    return res.data;
-  } catch {
-    const orders = await fetchOrders();
-    return orders.slice(0, 5).map(o => ({
-      id: `#SL-${o.order_id}`,
-      customer: o.customer || 'ลูกค้า',
-      total: `฿${Math.round(o.total_price || 0)}`,
-      status: o.status,
-    }));
-  }
+  const res = await adminApi.get("/api/dashboard/recent-orders");
+  return res.data;
 }
 
 export async function fetchTopProducts() {
-  try {
-    const res = await adminApi.get("/api/dashboard/top-products");
-    return res.data;
-  } catch {
-    return [];
-  }
+  const res = await adminApi.get("/api/dashboard/top-products");
+  return res.data;
+}
+
+export async function fetchRevenueByCategory() {
+  const res = await adminApi.get("/api/dashboard/revenue-by-category");
+  return res.data;
+}
+
+export async function fetchTopCustomers() {
+  const res = await adminApi.get("/api/dashboard/top-customers");
+  return res.data;
+}
+
+export async function fetchPaymentMethodStats() {
+  const res = await adminApi.get("/api/dashboard/payment-methods");
+  return res.data;
+}
+
+export async function fetchInventoryValue() {
+  const res = await adminApi.get("/api/dashboard/inventory-value");
+  return res.data;
+}
+
+export async function fetchAverageOrderValue() {
+  const res = await adminApi.get("/api/dashboard/average-order-value");
+  return res.data;
 }
 
