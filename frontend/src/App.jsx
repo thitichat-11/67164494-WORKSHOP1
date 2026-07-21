@@ -21,6 +21,15 @@ import ShippingAddress from "./pages/user/ShippingAddess";
 import Signup from "./pages/user/Singup";
 import Signin from "./pages/user/Signin";
 
+// Admin pages
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import StatisticsPage from "./pages/admin/StatisticsPage";
+import ProductsPage from "./pages/admin/ProductsPage";
+import CategoryPage from "./pages/admin/CategoryPage";
+import AddProductPage from "./pages/admin/AddProductPage";
+import CustomersPage from "./pages/admin/CustomersPage";
+import OrdersPage from "./pages/admin/OrdersPage";
 
 // components
 import Menu from "./components/Menu";
@@ -75,6 +84,15 @@ const App = () => {
             <Route path="seemorespring" element={<SeeMoreSpring />} />
           </Route>
 
+          {/* Admin routes */}
+          <Route path="/Admin" element={<Navigate to="/Admin/Dashboard" replace />} />
+          <Route path="/Admin/Dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/Admin/Statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
+          <Route path="/Admin/Products" element={<AdminLayout><ProductsPage /></AdminLayout>} />
+          <Route path="/Admin/Category" element={<AdminLayout><CategoryPage /></AdminLayout>} />
+          <Route path="/Admin/AddProduct" element={<AdminLayout><AddProductPage /></AdminLayout>} />
+          <Route path="/Admin/Customers" element={<AdminLayout><CustomersPage /></AdminLayout>} />
+          <Route path="/Admin/Orders" element={<AdminLayout><OrdersPage /></AdminLayout>} />
         </Routes>
       </BrowserRouter>
     </div>
