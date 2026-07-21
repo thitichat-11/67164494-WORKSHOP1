@@ -2,14 +2,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Akatab:wght@400;600;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=42dot+Sans:wght@300;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 body, html {
-  font-family: 'Abhaya Libre';
+  font-family: 'Inter', 'Abhaya Libre';
   background-color: #FFFEF0;
 }
 
-h1, h2, h3, h4, h5, h6, button, span, p, i, a, div {
-  font-family: 'Abhaya Libre';
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+button, span, p, i, a, div {
+  font-family: 'Inter', 'Abhaya Libre';
 }
 
 .use-abril, .use-abril * {
@@ -22,4 +28,15 @@ h1, h2, h3, h4, h5, h6, button, span, p, i, a, div {
 
 .use-42dot, .use-42dot * {
   font-family: '42dot Sans', sans-serif !important;
+}
+
+/* Admin UI Components */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
