@@ -23,15 +23,7 @@ const StatisticsPage = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [salesData, setSalesData] = useState([
-    { label: 'จันทร์', sales: 2400 },
-    { label: 'อังคาร', sales: 1398 },
-    { label: 'พุธ', sales: 9800 },
-    { label: 'พฤหัสบดี', sales: 3908 },
-    { label: 'ศุกร์', sales: 4800 },
-    { label: 'เสาร์', sales: 3800 },
-    { label: 'อาทิตย์', sales: 4300 },
-  ]);
+  const [salesData, setSalesData] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [stats, setStats] = useState({
@@ -60,7 +52,7 @@ const StatisticsPage = () => {
           fetchOrderStatus(),
         ]);
         setStats(statsData);
-        setSalesData(salesData.data || []);
+        setSalesData(salesData?.data || []);
         setRecentOrders(ordersData);
         setOrderStatusData(statusData.data || []);
       } catch (err) {

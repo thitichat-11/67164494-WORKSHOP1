@@ -64,36 +64,57 @@ export const getDashboardStats = async (req, res) => {
 
 export const getSalesData = async (req, res) => {
   const { period = 'week' } = req.query;
+  console.log('[getSalesData] Period:', period);
   try {
     let query = '';
 
     if (period === 'month') {
       query = `
-        SELECT DATE_FORMAT(created_at, '%d') AS label, COALESCE(SUM(total_price), 0) AS sales
+        SELECT DATE(created_at) AS date_only, DATE_FORMAT(DATE(created_at), '%d') AS label, SUM(total_price) AS sales
         FROM orders
         WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())
-        GROUP BY DATE(created_at)
+        GROUP BY DATE(created_at), DATE_FORMAT(DATE(created_at), '%d')
         ORDER BY DATE(created_at)
       `;
     } else if (period === 'year') {
       query = `
-        SELECT DATE_FORMAT(created_at, '%b') AS label, COALESCE(SUM(total_price), 0) AS sales
+        SELECT MONTH(created_at) AS month_only, DATE_FORMAT(created_at, '%b') AS label, SUM(total_price) AS sales
         FROM orders
         WHERE YEAR(created_at) = YEAR(NOW())
-        GROUP BY MONTH(created_at), YEAR(created_at)
+        GROUP BY MONTH(created_at), DATE_FORMAT(created_at, '%b')
         ORDER BY MONTH(created_at)
       `;
     } else {
       query = `
-        SELECT DATE_FORMAT(created_at, '%a') AS label, COALESCE(SUM(total_price), 0) AS sales
+        SELECT
+          DATE(created_at) AS date_only,
+          CASE WHEN DAYOFWEEK(DATE(created_at)) = 1 THEN 'อาทิตย์'
+               WHEN DAYOFWEEK(DATE(created_at)) = 2 THEN 'จันทร์'
+               WHEN DAYOFWEEK(DATE(created_at)) = 3 THEN 'อังคาร'
+               WHEN DAYOFWEEK(DATE(created_at)) = 4 THEN 'พุธ'
+               WHEN DAYOFWEEK(DATE(created_at)) = 5 THEN 'พฤหัสบดี'
+               WHEN DAYOFWEEK(DATE(created_at)) = 6 THEN 'ศุกร์'
+               WHEN DAYOFWEEK(DATE(created_at)) = 7 THEN 'เสาร์'
+          END AS label,
+          SUM(total_price) AS sales
         FROM orders
         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 DAY)
-        GROUP BY DATE(created_at)
+        GROUP BY DATE(created_at), DAYOFWEEK(DATE(created_at))
         ORDER BY DATE(created_at)
       `;
     }
 
-    const [data] = await db.query(query);
+    console.log('[getSalesData] Executing query');
+    let [rows] = await db.query(query);
+    console.log('[getSalesData] Raw rows:', rows);
+
+    const data = rows.map(row => ({
+      label: row.label,
+      sales: Number(row.sales) || 0
+    }));
+
+    console.log('[getSalesData] Formatted data:', data);
+
     const [[{ total }]] = await db.query(
       `SELECT COALESCE(SUM(total_price), 0) AS total FROM orders WHERE ${
         period === 'month'
@@ -104,8 +125,10 @@ export const getSalesData = async (req, res) => {
       }`
     );
 
-    res.json({ data: data || [], total: total || 0 });
+    console.log('[getSalesData] Total:', total);
+    res.json({ data: data || [], total: Number(total) || 0 });
   } catch (e) {
+    console.error('[getSalesData] Error:', e);
     res.status(500).json({ error: e.message });
   }
 };
@@ -198,6 +221,35 @@ export const getTopProducts = async (req, res) => {
 
     res.json(result);
   } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+// Helper endpoint to insert sample orders for testing
+export const insertSampleSalesData = async (req, res) => {
+  try {
+    console.log('[insertSampleSalesData] Starting');
+    const sampleData = [
+      { date: 'NOW() - INTERVAL 6 DAY', amount: 2400 },
+      { date: 'NOW() - INTERVAL 5 DAY', amount: 1398 },
+      { date: 'NOW() - INTERVAL 4 DAY', amount: 9800 },
+      { date: 'NOW() - INTERVAL 3 DAY', amount: 3908 },
+      { date: 'NOW() - INTERVAL 2 DAY', amount: 4800 },
+      { date: 'NOW() - INTERVAL 1 DAY', amount: 3800 },
+      { date: 'NOW()', amount: 4300 },
+    ];
+
+    for (const data of sampleData) {
+      await db.query(
+        `INSERT INTO orders (total_price, status, created_at, email, first_name, last_name, phone, address, city, state, postcode, country)
+         VALUES (?, 'delivered', ${data.date}, 'test@example.com', 'Test', 'User', '0812345678', '123 Test St', 'Bangkok', 'Bangkok', '10110', 'Thailand')`,
+        [data.amount]
+      );
+    }
+
+    res.json({ success: true, message: 'Sample sales data inserted' });
+  } catch (e) {
+    console.error('[insertSampleSalesData] Error:', e);
     res.status(500).json({ error: e.message });
   }
 };

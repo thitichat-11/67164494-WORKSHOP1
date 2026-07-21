@@ -95,15 +95,7 @@ const AdminDashboard = () => {
     lowStockProducts: 0,
   });
   const [salesChart, setSalesChart] = useState({
-    data: [
-      { label: 'จันทร์', sales: 2400 },
-      { label: 'อังคาร', sales: 1398 },
-      { label: 'พุธ', sales: 9800 },
-      { label: 'พฤหัสบดี', sales: 3908 },
-      { label: 'ศุกร์', sales: 4800 },
-      { label: 'เสาร์', sales: 3800 },
-      { label: 'อาทิตย์', sales: 4300 },
-    ],
+    data: [],
     total: 0
   });
   const [orderStatusData, setOrderStatusData] = useState([]);
@@ -124,7 +116,7 @@ const AdminDashboard = () => {
           fetchTopProducts(),
         ]);
         setStats(statsData);
-        setSalesChart(salesData);
+        setSalesChart(salesData || { data: [], total: 0 });
         setOrderStatusData(statusData.data || []);
         setOrderStatusTotal(statusData.total || 0);
         setRecentOrders(ordersData);
