@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db:3306
--- Generation Time: Jul 20, 2026 at 11:26 AM
+-- Generation Time: Jul 20, 2026 at 06:13 PM
 -- Server version: 8.0.46
--- PHP Version: 8.3.30
+-- PHP Version: 8.3.32
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -39,8 +39,8 @@ CREATE TABLE `campaigns` (
 --
 
 INSERT INTO `campaigns` (`id`, `slug`, `title`, `content_json`) VALUES
-(1, 'spring-lookbook', 'Spring Lookbook', '{\"images\": [\"https://image.msscdn.net/thumbnails/global_images/goods_img/20250819/5335185/5335185_17585043408372_big.jpg\", \"https://img.shoplineapp.com/media/image_clips/6908d482fa93bd00144f634a/original.jpeg?1762186369=&owner_id=57ff39d96170695338f65200\"]}'),
-(2, 'in-her-own-language', 'IN HER OWN LANGUAGE', '{\"list\": [\"1. WINTER\", \"2. KARINA\"], \"hero_image\": \"https://f.ptcdn.info/315/084/000/lwreqf75iX3B2T26hbm-s.jpg\"}');
+(1, 'spring-lookbook', 'Spring Lookbook', '{\"images\": [\"https://image.msscdn.net/thumbnails/global_images/goods_img/20250819/5335185/5335185_17585043408372_big.jpg\", \"https://img.shoplineapp.com/media/image_clips/6908d482fa93bd00144f634a/original.jpeg?1762186369=&owner_id=57ff39d96170695338f65200\", \"https://image.msscdn.net/images/goods_img/20250819/5335153/5335153_17585088810345_500.jpg\", \"https://preview.redd.it/231120-winter-for-polo-ralph-lauren-v0-v3oro4ftre1c1.jpg?width=640&crop=smart&auto=webp&s=eca3091107c798f86fa9439f2412ab634e95c7e4\", \"https://pbs.twimg.com/media/G_4hhThW4AAob3q.jpg\", \"https://www.fashionchingu.com/wp-content/uploads/2024/04/Black-Double-Layers-Pleated-Skirt-Winter-Aespa-Idol-1-500x685.jpg\", \"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh2BztG-llbah2Woxke1HMGpd9Aaseyzw4wQGmdHww3-EBW8vcbZ9kzPA&s=10\", \"https://pbs.twimg.com/media/HGFRo0LXkAAw05g.jpg\", \"https://pbs.twimg.com/media/HL4ImN7aIAAj88s.jpg\", \"https://valiram247.com/cdn/shop/files/C2971FBCCB3D4E2DB053D3A1C54CE725.jpg?v=1755830996\", \"https://files.vogue.co.th/uploads/Karina_X_MLB_(13).webp\", \"https://pbs.twimg.com/media/GqZOLiEXwAAA4cK.jpg\"]}'),
+(2, 'in-her-own-language', 'IN HER OWN LANGUAGE', '{\"list\": [\"1. WINTER - Kim Minjeong\", \"2. KARINA - Yoo Jimin\", \"3. GISELLE - Uchinaga Aeri\", \"4. NINGNING - Ning Yizhuo\"], \"hero_image\": \"https://f.ptcdn.info/315/084/000/lwreqf75iX3B2T26hbm-s.jpg\", \"paragraphs\": [\"SALA continues the exploration of its Spring/Summer 2026 collection, “A Dialogue with Oneself,” which invites women to reflect on their identity, thoughts, and inner conversations, through its latest fashion campaign, “In Her Own Language”. The campaign celebrates the many dimensions of womanhood through a more profound and nuanced perspective.\", \"In this campaign, SALA moves beyond conventional definitions by proposing that women do not simply use language to communicate with the world. The woman herself is the language, a language reflected through her way of life, mindset, experiences, as well as the inspiration and values she passes on to society. For SALA, clothing is not merely something women wear, but one of the languages they use to express who they are.\", \"The campaign conveys this concept through the stories of women from diverse industries, each interpreting her own language through pieces from the Spring/Summer 2026 collection. Each woman reflects her perspective on life, experiences, and role in the world through her own distinctive style. The campaign features inspiring women from 4 industries:\"], \"grid_images\": [\"https://preview.redd.it/231120-winter-for-polo-ralph-lauren-v0-v3oro4ftre1c1.jpg?width=640&crop=smart&auto=webp&s=eca3091107c798f86fa9439f2412ab634e95c7e4\", \"https://f.ptcdn.info/182/083/000/s8kf5b1d6xpDqfkoOYi9K-o.jpg\", \"https://www.pusspussmagazine.com/wp-content/uploads/2025/02/image00003-1440x2016.jpg\", \"https://img.shoplineapp.com/media/image_clips/6908d482fa93bd00144f634a/original.jpeg?1762186369=&owner_id=57ff39d96170695338f65200\"]}');
 
 -- --------------------------------------------------------
 
@@ -89,18 +89,18 @@ CREATE TABLE `orders` (
   `total_price` decimal(10,2) NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `email` varchar(255) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL COMMENT 'เก็บอีเมลผู้รับ',
+  `first_name` varchar(100) NOT NULL COMMENT 'ชื่อจริงผู้รับ',
+  `last_name` varchar(100) NOT NULL COMMENT 'นามสกุลผู้รับ',
   `phone` varchar(20) NOT NULL,
-  `address` text NOT NULL,
-  `city` varchar(100) NOT NULL,
-  `state` varchar(100) NOT NULL,
-  `postcode` varchar(10) NOT NULL,
-  `country` varchar(100) NOT NULL,
-  `subtotal` decimal(10,2) NOT NULL,
-  `shipping_free` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `payment_method` varchar(50) NOT NULL,
+  `address` text NOT NULL COMMENT 'ที่อยู่บ้านเลขที่ ถนน ซอย',
+  `city` varchar(100) NOT NULL COMMENT 'อำเภอ/เขต/เมือง',
+  `state` varchar(100) NOT NULL COMMENT 'จังหวัด/รัฐ',
+  `postcode` varchar(10) NOT NULL COMMENT 'รหัสไปรษณีย์',
+  `country` varchar(100) NOT NULL COMMENT 'ประเทศ',
+  `subtotal` decimal(10,2) NOT NULL COMMENT 'ยอดรวมสินค้าก่อนคิดค่าส่ง (เช่น 480.00)',
+  `shipping_free` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT 'ค่าจัดส่ง (กำหนด Default เป็น 0.00 ไว้ก่อนได้)',
+  `payment_method` varchar(50) NOT NULL COMMENT 'เก็บประเภทการจ่ายเงิน',
   `payment_slip` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -109,8 +109,12 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `user_id`, `total_price`, `status`, `created_at`, `email`, `first_name`, `last_name`, `phone`, `address`, `city`, `state`, `postcode`, `country`, `subtotal`, `shipping_free`, `payment_method`, `payment_slip`) VALUES
-(5, 1, 1010.00, 'pending', '2026-07-18 20:57:19', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 1010.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784408239935-646298676.jpg'),
-(6, 1, 700.00, 'pending', '2026-07-18 20:59:19', 'kater@gmail.com', 'kater', 'lover', '0652939090', '11120', 'pak kret', 'sm', '11120', 'THAILAND', 700.00, 0.00, 'CREDIT_CARD', '/uploads/payment-slips/1784408359588-816712261.jpg');
+(8, 1, 700.00, 'pending', '2026-07-19 17:48:25', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 700.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784483305482-74416120.jpg'),
+(9, 1, 540.00, 'completed', '2026-07-19 17:49:11', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 540.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784483351049-494322149.jpg'),
+(10, 1, 390.00, 'cancelled', '2026-07-20 16:58:30', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 390.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784566710211-481212927.jpg'),
+(11, 1, 560.00, 'refunded', '2026-07-20 16:59:31', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 560.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784566771950-360287860.jpg'),
+(12, 1, 355.00, 'pending', '2026-07-20 17:17:58', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'TH-10', '11120', 'THAILAND', 355.00, 0.00, 'PROMPTPAY', '/uploads/payment-slips/1784567878855-127566341.jpg'),
+(13, 1, 390.00, 'cancelled', '2026-07-20 17:18:36', 'pataraporn142548@gmail.com', 'Pattarapond', 'Saelee', '0652939090', '11120', 'pak kret', 'nonthaburi', '11120', 'THAILAND', 390.00, 0.00, 'CREDIT_CARD', '/uploads/payment-slips/1784567916532-872208791.png');
 
 -- --------------------------------------------------------
 
@@ -125,6 +129,18 @@ CREATE TABLE `order_items` (
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`item_id`, `order_id`, `variant_id`, `quantity`, `price`) VALUES
+(9, 8, 5, 1, 700.00),
+(10, 9, 23, 1, 540.00),
+(11, 10, 50, 1, 390.00),
+(12, 11, 53, 1, 560.00),
+(13, 12, 62, 1, 355.00),
+(14, 13, 50, 1, 390.00);
 
 -- --------------------------------------------------------
 
@@ -223,13 +239,13 @@ CREATE TABLE `product_variants` (
 --
 
 INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `code`, `stock_quantity`) VALUES
-(3, 1, '#FFFFFF', 'XS', 'SALA-1-2C3E50-XS', 10),
-(4, 1, '#FFFFFF', 'S', 'SALA-1-2C3E50-S', 10),
-(5, 1, '#FFFFFF', 'M', 'SALA-1-2C3E50-M', 10),
-(6, 1, '#FFFFFF', 'L', 'SALA-1-2C3E50-L', 10),
+(3, 1, '#FFFFFF', 'XS', 'SALA-1-2C3E50-XS', 9),
+(4, 1, '#FFFFFF', 'S', 'SALA-1-2C3E50-S', 8),
+(5, 1, '#FFFFFF', 'M', 'SALA-1-2C3E50-M', 9),
+(6, 1, '#FFFFFF', 'L', 'SALA-1-2C3E50-L', 2),
 (7, 2, '#FDD741', 'XS', 'SALA-2-EFE3D0-XS', 10),
 (8, 2, '#FDD741', 'S', 'SALA-2-EFE3D0-S', 10),
-(9, 2, '#FDD741', 'M', 'SALA-2-EFE3D0-M', 10),
+(9, 2, '#FDD741', 'M', 'SALA-2-EFE3D0-M', 9),
 (10, 2, '#FDD741', 'L', 'SALA-2-EFE3D0-L', 10),
 (11, 2, '#1C2833', 'XS', 'SALA-2-8B5A2B-XS', 10),
 (12, 2, '#1C2833', 'S', 'SALA-2-8B5A2B-S', 10),
@@ -238,12 +254,12 @@ INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `co
 (15, 3, '#F2C9C9', 'XS', 'SALA-3-F2C9C9-XS', 10),
 (16, 3, '#F2C9C9', 'S', 'SALA-3-F2C9C9-S', 10),
 (17, 3, '#F2C9C9', 'M', 'SALA-3-F2C9C9-M', 10),
-(18, 3, '#F2C9C9', 'L', 'SALA-3-F2C9C9-L', 10),
+(18, 3, '#F2C9C9', 'L', 'SALA-3-F2C9C9-L', 9),
 (19, 4, '#5b312a', 'XS', 'SALA-4-1C2833-XS', 10),
 (20, 4, '#5b312a', 'S', 'SALA-4-1C2833-S', 10),
 (21, 4, '#5b312a', 'M', 'SALA-4-1C2833-M', 10),
 (22, 4, '#5b312a', 'L', 'SALA-4-1C2833-L', 10),
-(23, 5, '#81876b', 'XS', 'SALA-5-0B1220-XS', 10),
+(23, 5, '#81876b', 'XS', 'SALA-5-0B1220-XS', 9),
 (28, 5, '#81876b', 'S', 'SALA-5-3B4A63-S', 10),
 (29, 5, '#81876b', 'M', 'SALA-5-3B4A63-M', 10),
 (30, 5, '#81876b', 'L', 'SALA-5-3B4A63-L', 10),
@@ -262,10 +278,10 @@ INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `co
 (47, 9, '#7d2332', 'XS', 'SALA-9-F2C9C9-XS', 10),
 (48, 9, '#7d2332', 'S', 'SALA-9-F2C9C9-S', 10),
 (49, 9, '#7d2332', 'M', 'SALA-9-F2C9C9-M', 10),
-(50, 9, '#7d2332', 'L', 'SALA-9-F2C9C9-L', 10),
+(50, 9, '#7d2332', 'L', 'SALA-9-F2C9C9-L', 8),
 (51, 10, '#575397', 'XS', 'SALA-10-A07855-XS', 10),
 (52, 10, '#575397', 'S', 'SALA-10-A07855-S', 10),
-(53, 10, '#575397', 'M', 'SALA-10-A07855-M', 10),
+(53, 10, '#575397', 'M', 'SALA-10-A07855-M', 9),
 (54, 10, '#575397', 'L', 'SALA-10-A07855-L', 10),
 (55, 11, '#eeeceb', 'XS', 'SALA-11-D9CBB8-XS', 10),
 (56, 11, '#eeeceb', 'S', 'SALA-11-D9CBB8-S', 10),
@@ -274,7 +290,7 @@ INSERT INTO `product_variants` (`variant_id`, `product_id`, `color`, `size`, `co
 (59, 11, '#16140e', 'XS', 'SALA-11-3B3B3B-XS', 10),
 (60, 11, '#16140e', 'S', 'SALA-11-3B3B3B-S', 10),
 (61, 11, '#16140e', 'M', 'SALA-11-3B3B3B-M', 10),
-(62, 11, '#16140e', 'L', 'SALA-11-3B3B3B-L', 10),
+(62, 11, '#16140e', 'L', 'SALA-11-3B3B3B-L', 9),
 (63, 12, '#b9dffc', 'XS', 'SALA-12-000000-XS', 10),
 (64, 12, '#b9dffc', 'S', 'SALA-12-000000-S', 10),
 (65, 12, '#b9dffc', 'M', 'SALA-12-000000-M', 10),
@@ -336,19 +352,30 @@ INSERT INTO `roles` (`role_id`, `role_name`) VALUES
 CREATE TABLE `users` (
   `user_id` int NOT NULL,
   `username` varchar(100) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `phonenumber` varchar(20) NOT NULL,
   `role_id` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `birthdate` date DEFAULT NULL,
+  `country_region` varchar(100) DEFAULT NULL,
+  `house_number_street` varchar(255) DEFAULT NULL,
+  `apartment_suite_unit` varchar(100) DEFAULT NULL,
+  `town_city` varchar(100) DEFAULT NULL,
+  `state_province` varchar(100) DEFAULT NULL,
+  `postcode_zip` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role_id`, `created_at`) VALUES
-(1, 'imwinter', 'winter@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', 1, '2026-07-20 11:24:27'),
-(2, 'aerichandesu', 'giselle@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', 2, '2026-07-20 11:24:27');
+INSERT INTO `users` (`user_id`, `username`, `first_name`, `last_name`, `email`, `password`, `phonenumber`, `role_id`, `created_at`, `birthdate`, `country_region`, `house_number_street`, `apartment_suite_unit`, `town_city`, `state_province`, `postcode_zip`) VALUES
+(1, 'imwinter', 'Minjeong', 'Yu', 'winter@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '0651234567', 1, '2026-07-16 22:24:52', '2000-12-28', 'THAILAND', '86', '36/63', 'phakret', 'Bangkok', '11120'),
+(2, 'aerichandesu', '', '', 'giselle@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '', 2, '2026-07-16 22:25:04', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 'imtaro', 'Pattarapond', 'Saelee', 'pataraporn142548@gmail.com', '$2b$10$DwJSuZT3xZBIg2Gq76RjdO9BbJVjkxRW4lKv8dCwPM2yWWg9EGBRm', '0652939090', 1, '2026-07-19 17:11:40', '2026-07-20', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -481,7 +508,7 @@ ALTER TABLE `campaigns`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `cart_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -493,25 +520,25 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `item_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `product_images`
 --
 ALTER TABLE `product_images`
-  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `product_variants`
@@ -529,7 +556,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `wishlists`

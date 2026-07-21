@@ -186,7 +186,10 @@ export const updateProduct = async (req, res) => {
         }
 
         await connection.commit();
-        res.status(200).json({ message: "อัปเดตข้อมูลสินค้าสำเร็จเรียบร้อย ✏️" });
+        res.status(200).json({
+            message: "อัปเดตข้อมูลสินค้าสำเร็จเรียบร้อย ✏️",
+            product: { product_id: id, name, category_id, description, base_price }
+        });
 
     } catch (error) {
         await connection.rollback();

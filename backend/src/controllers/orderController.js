@@ -7,9 +7,11 @@ export const getAllOrders = async (req, res) => {
     try {
         // ดึงข้อมูล Order ทั้งหมด พร้อมชื่อผู้ใช้งาน (ถ้ามี)
         const [orders] = await db.query(`
-            SELECT 
-                o.*, 
-                u.username AS account_username
+            SELECT
+                o.*,
+                u.username AS account_username,
+                COALESCE(CONCAT(o.first_name, ' ', o.last_name), u.username, 'ลูกค้า') AS customer,
+                DATE_FORMAT(o.created_at, '%d %b %Y') AS date
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.user_id
             ORDER BY o.created_at DESC
@@ -18,13 +20,13 @@ export const getAllOrders = async (req, res) => {
         // ดึงรายการสินค้าย่อย (Order Items) ในแต่ละ Order
         for (let order of orders) {
             const [items] = await db.query(`
-                SELECT 
-                    oi.item_id, 
-                    oi.quantity, 
-                    oi.price, 
-                    pv.color, 
-                    pv.size, 
-                    pv.code, 
+                SELECT
+                    oi.item_id,
+                    oi.quantity,
+                    oi.price,
+                    pv.color,
+                    pv.size,
+                    pv.code,
                     p.product_id,
                     p.name AS product_name,
                     pi.img_url AS primary_image
@@ -35,14 +37,37 @@ export const getAllOrders = async (req, res) => {
                 WHERE oi.order_id = ?
             `, [order.order_id]);
 
+            // Format the response for frontend compatibility
+            order.id = `#SL-${order.order_id}`;
             order.items = items;
+            order.itemsList = items.map(item => ({
+                name: item.product_name,
+                qty: item.quantity,
+                price: `$${Number(item.price).toFixed(0)}`,
+                color: item.color || "-",
+                size: item.size || "-"
+            }));
+            order.total = `$${Number(order.total_price).toFixed(0)}`;
+            order.shipping = {
+                address: order.address || "-",
+                phone: order.phone || "-"
+            };
+            order.tracking = order.tracking_number || "—";
+            // Map status to display name
+            const statusMap = {
+                'pending': 'Processing',
+                'shipped': 'Shipped',
+                'delivered': 'Delivered',
+                'cancelled': 'Cancelled'
+            };
+            order.order_status = statusMap[order.status] || order.status;
         }
 
         res.status(200).json(orders);
     } catch (error) {
-        res.status(500).json({ 
-            message: "เกิดข้อผิดพลาดในการดึงรายการคำสั่งซื้อ", 
-            error: error.message 
+        res.status(500).json({
+            message: "เกิดข้อผิดพลาดในการดึงรายการคำสั่งซื้อ",
+            error: error.message
         });
     }
 };

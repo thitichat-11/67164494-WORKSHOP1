@@ -1,76 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminProfile from "./admin-ui/AdminProfile";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip, PieChart, Pie, Cell,
+  LineChart, Line, Legend, Area, AreaChart
 } from "recharts";
-
-// ── Summary Cards (6 cards) ──
-const summaryCards = [
-  { title: "รายได้รวม",          value: "฿1,170,000", change: "+17.8% จากเดือนก่อน", up: true,  icon: "bi-graph-up-arrow" },
-  { title: "คำสั่งซื้อวันนี้",    value: "18",         change: "+5 จากเมื่อวาน",       up: true,  icon: "bi-cart-check" },
-  { title: "ลูกค้าทั้งหมด",      value: "1,248",      change: "+93 ใหม่เดือนนี้",     up: true,  icon: "bi-people" },
-  { title: "สินค้าทั้งหมด",      value: "64",         change: "3 รายการหมดสต็อก",     up: null,  icon: "bi-box-seam" },
-  { title: "ออเดอร์รอดำเนินการ", value: "48",         change: "รอการยืนยัน",          up: null,  icon: "bi-clock-history" },
-  { title: "สินค้าใกล้หมด",     value: "7",          change: "ต้องการเติมสต็อก",      up: false, icon: "bi-exclamation-triangle" },
-];
-
-// ── Sales Chart Data ──
-const weeklyData = [
-  { label: "จ",  sales: 32000 },
-  { label: "อ",  sales: 41000 },
-  { label: "พ",  sales: 28000 },
-  { label: "พฤ", sales: 52000 },
-  { label: "ศ",  sales: 48000 },
-  { label: "ส",  sales: 39000 },
-  { label: "อา", sales: 21000 },
-];
-
-const monthlyData = [
-  { label: "ม.ค.", sales: 180000 },
-  { label: "ก.พ.", sales: 210000 },
-  { label: "มี.ค.", sales: 165000 },
-  { label: "เม.ย.", sales: 240000 },
-  { label: "พ.ค.", sales: 195000 },
-  { label: "มิ.ย.", sales: 261000 },
-];
-
-const yearlyData = [
-  { label: "2022", sales: 1850000 },
-  { label: "2023", sales: 2120000 },
-  { label: "2024", sales: 2480000 },
-  { label: "2025", sales: 1950000 },
-];
-
-// ── Order Status Distribution ──
-const orderStatusData = [
-  { name: "ดำเนินการ",   value: 18, color: "#A6713B" },
-  { name: "จัดส่งแล้ว",  value: 12, color: "#3C7741" },
-  { name: "จัดส่งเสร็จ", value: 45, color: "#2D612A" },
-  { name: "ยกเลิก",     value: 5,  color: "#A73937" },
-];
-
-const recentOrders = [
-  { id: "#SL-1042", customer: "Praewa Suksan",  total: "฿32,400",  status: "Processing" },
-  { id: "#SL-1041", customer: "John Doe",        total: "฿17,280",  status: "Shipped"    },
-  { id: "#SL-1040", customer: "Emma Wilson",     total: "฿32,040",  status: "Delivered"  },
-  { id: "#SL-1039", customer: "Natthapong Chai", total: "฿11,160",  status: "Cancelled"  },
-  { id: "#SL-1038", customer: "Mia Torres",      total: "฿20,160",  status: "Delivered"  },
-];
-
-const topProducts = [
-  { name: "SALA Girls Don't Cry Dress",   sold: 48,  revenue: "฿43,200" },
-  { name: "SALA Silk Wrap Blouse",        sold: 35,  revenue: "฿11,200" },
-  { name: "SALA Pleated Midi Skirt",      sold: 28,  revenue: "฿11,480" },
-  { name: "SALA Leather Saddle Bag",      sold: 22,  revenue: "฿12,320" },
-];
+import {
+  fetchDashboardStats,
+  fetchSalesData,
+  fetchOrderStatus,
+  fetchRecentOrders,
+  fetchTopProducts,
+} from "../../api/adminApi";
 
 const statusColors = {
   Processing: { bg: "#FAEBD9", color: "#A6713B" },
   Shipped:    { bg: "#EEF4ED", color: "#3C7741" },
   Delivered:  { bg: "#E2F1E0", color: "#2D612A" },
   Cancelled:  { bg: "#FAEAEA", color: "#A73937" },
+  pending: { bg: "#FAEBD9", color: "#A6713B" },
+  shipped: { bg: "#EEF4ED", color: "#3C7741" },
+  delivered: { bg: "#E2F1E0", color: "#2D612A" },
+  cancelled: { bg: "#FAEAEA", color: "#A73937" },
 };
 
 const cardStyle = {
@@ -126,16 +78,157 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("week");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+    revenueChange: "+0%",
+    todayOrders: 0,
+    ordersChange: "0",
+    totalCustomers: 0,
+    newCustomersThisMonth: 0,
+    totalProducts: 0,
+    outOfStockProducts: 0,
+    pendingOrders: 0,
+    lowStockProducts: 0,
+  });
+  const [salesChart, setSalesChart] = useState({
+    data: [
+      { label: 'จันทร์', sales: 2400 },
+      { label: 'อังคาร', sales: 1398 },
+      { label: 'พุธ', sales: 9800 },
+      { label: 'พฤหัสบดี', sales: 3908 },
+      { label: 'ศุกร์', sales: 4800 },
+      { label: 'เสาร์', sales: 3800 },
+      { label: 'อาทิตย์', sales: 4300 },
+    ],
+    total: 0
+  });
+  const [orderStatusData, setOrderStatusData] = useState([]);
+  const [orderStatusTotal, setOrderStatusTotal] = useState(0);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [statsData, salesData, statusData, ordersData, productsData] = await Promise.all([
+          fetchDashboardStats(),
+          fetchSalesData(selectedPeriod),
+          fetchOrderStatus(),
+          fetchRecentOrders(),
+          fetchTopProducts(),
+        ]);
+        setStats(statsData);
+        setSalesChart(salesData);
+        setOrderStatusData(statusData.data || []);
+        setOrderStatusTotal(statusData.total || 0);
+        setRecentOrders(ordersData);
+        setTopProducts(productsData);
+      } catch (err) {
+        console.error("Failed to load dashboard:", err);
+        setError("ไม่สามารถโหลดข้อมูลแดชบอร์ดได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDashboard();
+  }, [selectedPeriod]);
+
+  const formatCurrency = (value) => {
+    const num = Number(value);
+    if (num >= 1000000) return `฿${(num / 1000000).toFixed(1)}M`;
+    return `฿${num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  };
+
+  const summaryCards = [
+    {
+      title: "รายได้รวม",
+      value: formatCurrency(stats.totalRevenue),
+      change: `${stats.revenueChange} จากเดือนก่อน`,
+      up: !stats.revenueChange.startsWith("-"),
+      icon: "bi-graph-up-arrow",
+    },
+    {
+      title: "คำสั่งซื้อวันนี้",
+      value: stats.todayOrders.toString(),
+      change: `${stats.ordersChange} จากเมื่อวาน`,
+      up: !stats.ordersChange.startsWith("-") && stats.ordersChange !== "0",
+      icon: "bi-cart-check",
+    },
+    {
+      title: "ลูกค้าทั้งหมด",
+      value: stats.totalCustomers.toLocaleString(),
+      change: `+${stats.newCustomersThisMonth} ใหม่เดือนนี้`,
+      up: true,
+      icon: "bi-people",
+    },
+    {
+      title: "สินค้าทั้งหมด",
+      value: stats.totalProducts.toString(),
+      change: `${stats.outOfStockProducts} รายการหมดสต็อก`,
+      up: null,
+      icon: "bi-box-seam",
+    },
+    {
+      title: "ออเดอร์รอดำเนินการ",
+      value: stats.pendingOrders.toString(),
+      change: "รอการยืนยัน",
+      up: null,
+      icon: "bi-clock-history",
+    },
+    {
+      title: "สินค้าใกล้หมด",
+      value: stats.lowStockProducts.toString(),
+      change: "ต้องการเติมสต็อก",
+      up: false,
+      icon: "bi-exclamation-triangle",
+    },
+  ];
 
   const getChartData = () => {
+    const data = salesChart.data || [];
+    const total = salesChart.total || 0;
     switch (selectedPeriod) {
-      case "month": return { data: monthlyData, title: "ยอดขายรายเดือน", total: "฿1,251,000" };
-      case "year":  return { data: yearlyData,  title: "ยอดขายรายปี",    total: "฿8,400,000" };
-      default:      return { data: weeklyData,  title: "ยอดขายรายสัปดาห์", total: "฿261,000" };
+      case "month": return { data, title: "ยอดขายรายเดือน", total: formatCurrency(total) };
+      case "year":  return { data, title: "ยอดขายรายปี",    total: formatCurrency(total) };
+      default:      return { data, title: "ยอดขายรายสัปดาห์", total: formatCurrency(total) };
     }
   };
 
   const chartInfo = getChartData();
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ border: "3px solid #f0ede8", borderTop: "3px solid #CAB18B", borderRadius: "50%", width: "40px", height: "40px", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <p style={{ color: "#999", fontSize: "14px" }}>กำลังโหลดข้อมูล...</p>
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "#d14343", fontSize: "14px", marginBottom: "12px" }}>{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ padding: "8px 20px", backgroundColor: "#1A1714", color: "#fff", border: "none", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}
+          >
+            โหลดใหม่
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -214,14 +307,14 @@ const AdminDashboard = () => {
             <div style={{ fontSize: "15px", fontWeight: 600, color: "#000" }}>{chartInfo.title}</div>
             <div style={{ fontSize: "20px", fontWeight: 700, color: "#1A1714" }}>{chartInfo.total}</div>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={chartInfo.data} barSize={28} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} stroke="#f0ede8" />
               <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#888" }} />
               <YAxis hide />
               <Tooltip
                 cursor={{ fill: "#f5f0e8" }}
-                contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px" }}
+                contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px", backgroundColor: "#fff" }}
                 formatter={(v) => [`฿${v.toLocaleString()}`, "ยอดขาย"]}
               />
               <Bar dataKey="sales" fill="#CAB18B" radius={[6, 6, 0, 0]} />
@@ -251,7 +344,7 @@ const AdminDashboard = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px" }}
+                  contentStyle={{ borderRadius: "8px", border: "1px solid #e4e0d8", fontSize: "13px", backgroundColor: "#fff" }}
                   formatter={(v, name) => [v, name]}
                 />
               </PieChart>
@@ -268,7 +361,7 @@ const AdminDashboard = () => {
               ))}
               <div style={{ borderTop: "1px solid #f0ede8", paddingTop: "8px", marginTop: "4px", display: "flex", justifyContent: "space-between" }}>
                 <span style={{ fontSize: "12px", color: "#666", fontWeight: 500 }}>รวมทั้งหมด</span>
-                <span style={{ fontSize: "12px", fontWeight: 700, color: "#1A1714" }}>80</span>
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "#1A1714" }}>{orderStatusTotal}</span>
               </div>
             </div>
           </div>

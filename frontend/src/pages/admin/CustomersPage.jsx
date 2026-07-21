@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import AdminProfile from "./admin-ui/AdminProfile";
 import AlertModal from "./admin-ui/AlertModal";
+import { fetchCustomers, updateCustomerStatus } from "../../api/adminApi";
 
 const customersData = [
   { id: 1, name: "John Doe",        email: "john.doe@gmail.com",    phone: "081-234-5678", orders: 12, spent: "$4,860", tier: "VIP",    joined: "14 Feb 2025", status: "active" },
@@ -81,11 +82,43 @@ function ActionDropdown({ customer, onView, onToggleStatus, onChangeTier, onDele
 export default function Customers() {
   const [search, setSearch] = useState("");
   const [customers, setCustomers] = useState(customersData);
+  const [isLoading, setIsLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertConfig, setAlertConfig] = useState({ title: "", message: "", type: "alert" });
   const [tierModalOpen, setTierModalOpen] = useState(false);
   const [tierTarget, setTierTarget] = useState(null);
   const [selectedTier, setSelectedTier] = useState("Member");
+
+  // โหลดข้อมูลลูกค้าจาก API
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchCustomers();
+        if (Array.isArray(data) && data.length > 0) {
+          // แมป API response กับ mock data structure
+          const mapped = data.map((user, idx) => ({
+            id: user.user_id,
+            name: user.username || `ลูกค้า ${user.user_id}`,
+            email: user.email || "-",
+            phone: "-",
+            orders: 0,
+            spent: "$0",
+            tier: "Member",
+            joined: new Date(user.created_at).toLocaleDateString("th-TH"),
+            status: user.status === "active" ? "active" : "suspended",
+          }));
+          setCustomers(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to load customers:", err);
+        setCustomers(customersData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadCustomers();
+  }, []);
 
   const showAlert = (title, message, type) => {
     if (type === undefined) type = "alert";
@@ -108,11 +141,16 @@ export default function Customers() {
       title: "ยืนยันการ" + label,
       message: "คุณแน่ใจหรือไม่ว่าต้องการ" + label + 'ของ "' + customer.name + '"?',
       type: "confirm",
-      onConfirmAction: () => {
-        setCustomers((prev) =>
-          prev.map((c) => (c.id === customer.id ? { ...c, status: newStatus } : c))
-        );
-        showAlert("ดำเนินการสำเร็จ", label + 'ลูกค้า "' + customer.name + '" เรียบร้อยแล้ว', "alert");
+      onConfirmAction: async () => {
+        try {
+          await updateCustomerStatus(customer.id, { status: newStatus });
+          setCustomers((prev) =>
+            prev.map((c) => (c.id === customer.id ? { ...c, status: newStatus } : c))
+          );
+          showAlert("ดำเนินการสำเร็จ", label + 'ลูกค้า "' + customer.name + '" เรียบร้อยแล้ว', "alert");
+        } catch (err) {
+          showAlert("เกิดข้อผิดพลาด", "ไม่สามารถ" + label + "ได้: " + (err.response?.data?.message || err.message), "alert");
+        }
       },
     });
     setAlertOpen(true);

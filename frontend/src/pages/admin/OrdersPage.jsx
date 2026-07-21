@@ -293,12 +293,14 @@ export default function Orders() {
         setIsLoading(true);
         const res = await adminApi.get("/api/orders");
         if (!mounted) return;
-        setOrders(Array.isArray(res.data) ? res.data : []);
-      } catch {
+        const ordersData = Array.isArray(res.data) ? res.data : [];
+        setOrders(ordersData.length > 0 ? ordersData : fallbackOrders);
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
         if (!mounted) return;
         setOrders(fallbackOrders);
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
     load();
@@ -339,16 +341,23 @@ export default function Orders() {
   }, [orders, activeTab, statusMap]);
 
   const normalizeRow = (order) => {
-    const rowStatus = order.status || order.order_status || order.state;
+    const rowStatus = order.order_status || order.status || order.state;
+    const displayStatus = {
+      'pending': 'Processing',
+      'shipped': 'Shipped',
+      'delivered': 'Delivered',
+      'cancelled': 'Cancelled'
+    }[rowStatus] || rowStatus;
+
     return {
-      key: order.id ?? order.order_id ?? (order.customerName ?? "") + "-" + (order.date ?? ""),
-      id: order.id,
+      key: order.id || `#SL-${order.order_id}` || `${order.customer}-${order.date}`,
+      id: order.id || `#SL-${order.order_id}`,
       customer: order.customer || order.customerName,
       date: order.date,
-      items: order.items,
+      items: order.itemsList?.length || order.items?.length || 0,
       total: order.total,
-      status: rowStatus,
-      tracking: order.tracking,
+      status: displayStatus,
+      tracking: order.tracking || '—',
     };
   };
 
@@ -439,8 +448,8 @@ export default function Orders() {
                   <tr key={row.key} className="hover:bg-[#FAF9F6] transition-colors">
                     <td className="py-4 px-6 text-center font-medium">{row.id}</td>
                     <td className="py-4 px-6 text-center">{row.customer}</td>
-                    <td className="py-4 px-6 text-center">{row.date}</td>
-                    <td className="py-4 px-6 text-center">{row.items}</td>
+                    <td className="py-4 px-6 text-center">{row.date || "—"}</td>
+                    <td className="py-4 px-6 text-center">{typeof row.items === "number" ? `${row.items} ชิ้น` : (row.items || "—")}</td>
                     <td className="py-4 px-6 text-center font-medium">{row.total}</td>
                     <td className="py-4 px-6 text-center">
                       <span className={"px-3 py-1 rounded-full text-xs font-medium " + getStatusBadge(row.status)}>{row.status}</span>
