@@ -185,4 +185,20 @@ Server starting... imported all routes
 Server is running on port 5000
 Version: FIXED-TEST-NEW
 [32m[nodemon] restarting due to changes...[39m
-[32m[node
+[32m[nodemon] starting `node server.js`[39m
+Server starting... imported all routes
+Server is running on port 5000
+Version: FIXED-TEST-NEW
+[32m[nodemon] clean exit - waiting for changes before restart[39m
+[32m[nodemon] clean exit - waiting for changes before restart[39m
+emon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Server starting... imported all routes
+Server is running on port 5000
+Version: FIXED-TEST-NEW
+[DASHBOARD REQUEST] GET /api/dashboard/stats
+[DASHBOARD REQUEST] GET /api/dashboard/stats
+[DASHBOARD REQUEST] GET /api/dashboard/stats
+[DASHBOARD REQUEST] GET /api/dashboard/sales
+[DASHBOARD REQUEST] GET /api/dashboard/recent-orders
+[DASHBOARD REQUEST] GET /api/dashboard/top-products
