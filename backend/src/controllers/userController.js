@@ -6,9 +6,18 @@ import db from '../../Database/db.js';
 export const getAllUsers = async (req, res) => {
     try {
         const [users] = await db.query(`
-            SELECT u.user_id, u.username, u.email, u.role_id, r.role_name, u.status, u.created_at
+            SELECT 
+                u.user_id, 
+                u.username, 
+                u.email, 
+                u.phonenumber, 
+                u.role_id, 
+                r.role_name, 
+                u.status, 
+                u.created_at
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.role_id
+            WHERE u.role_id = 1 
             ORDER BY u.created_at DESC
         `);
 

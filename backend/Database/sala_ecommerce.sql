@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db:3306
--- Generation Time: Jul 20, 2026 at 06:13 PM
+-- Generation Time: Jul 21, 2026 at 03:22 PM
 -- Server version: 8.0.46
--- PHP Version: 8.3.32
+-- PHP Version: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -358,6 +358,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `phonenumber` varchar(20) NOT NULL,
   `role_id` int DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `birthdate` date DEFAULT NULL,
   `country_region` varchar(100) DEFAULT NULL,
@@ -372,10 +373,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `first_name`, `last_name`, `email`, `password`, `phonenumber`, `role_id`, `created_at`, `birthdate`, `country_region`, `house_number_street`, `apartment_suite_unit`, `town_city`, `state_province`, `postcode_zip`) VALUES
-(1, 'imwinter', 'Minjeong', 'Yu', 'winter@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '0651234567', 1, '2026-07-16 22:24:52', '2000-12-28', 'THAILAND', '86', '36/63', 'phakret', 'Bangkok', '11120'),
-(2, 'aerichandesu', '', '', 'giselle@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '', 2, '2026-07-16 22:25:04', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 'imtaro', 'Pattarapond', 'Saelee', 'pataraporn142548@gmail.com', '$2b$10$DwJSuZT3xZBIg2Gq76RjdO9BbJVjkxRW4lKv8dCwPM2yWWg9EGBRm', '0652939090', 1, '2026-07-19 17:11:40', '2026-07-20', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` (`user_id`, `username`, `first_name`, `last_name`, `email`, `password`, `phonenumber`, `role_id`, `status`, `created_at`, `birthdate`, `country_region`, `house_number_street`, `apartment_suite_unit`, `town_city`, `state_province`, `postcode_zip`) VALUES
+(1, 'imwinter', 'Minjeong', 'Yu', 'winter@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '0651234567', 1, 'active', '2026-07-16 22:24:52', '2000-12-28', 'THAILAND', '86', '36/63', 'phakret', 'Bangkok', '11120'),
+(2, 'aerichandesu', '', '', 'giselle@gmail.com', '$2b$10$JrqDlLfCpNe1bJmakjgrK.HrxqAwhUHYuvMCbK13DXMpeACJRPK4y', '', 2, 'active', '2026-07-16 22:25:04', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 'imtaro', 'Pattarapond', 'Saelee', 'pataraporn142548@gmail.com', '$2b$10$DwJSuZT3xZBIg2Gq76RjdO9BbJVjkxRW4lKv8dCwPM2yWWg9EGBRm', '0652939090', 1, 'active', '2026-07-19 17:11:40', '2026-07-20', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
