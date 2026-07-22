@@ -46,6 +46,24 @@ const ProtectedRoute = () => {
   return <Outlet />
 }
 
+const AdminRoute = () => {
+  const token = localStorage.getItem('token');
+  const roleId = localStorage.getItem('roleId');
+
+  // ถ้าไม่ได้ล็อกอิน ให้ไปหน้า signin
+  if (!token) {
+    return <Navigate to="/signin" replace />;
+  }
+  
+  // ถ้าล็อกอินแล้ว แต่ไม่ใช่ admin ให้เตะกลับไปหน้า mainpage
+  if (roleId !== '2') {
+    return <Navigate to="/mainpage" replace />;
+  }
+
+  // ถ้าเป็น admin ให้แสดงเนื้อหาได้ปกติ
+  return <Outlet />;
+}
+
 const App = () => {
   return (
     <div style={{ backgroundColor: "#FFFEF0" }}>
@@ -87,14 +105,16 @@ const App = () => {
           </Route>
 
           {/* Admin routes */}
-          <Route path="/Admin" element={<Navigate to="/Admin/Dashboard" replace />} />
-          <Route path="/Admin/Dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-          <Route path="/Admin/Statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
-          <Route path="/Admin/Products" element={<AdminLayout><ProductsPage /></AdminLayout>} />
-          <Route path="/Admin/Category" element={<AdminLayout><CategoryPage /></AdminLayout>} />
-          <Route path="/Admin/AddProduct" element={<AdminLayout><AddProductPage /></AdminLayout>} />
-          <Route path="/Admin/Customers" element={<AdminLayout><CustomersPage /></AdminLayout>} />
-          <Route path="/Admin/Orders" element={<AdminLayout><OrdersPage /></AdminLayout>} />
+          <Route element={<AdminRoute />}>
+            <Route path="/Admin" element={<Navigate to="/Admin/Dashboard" replace />} />
+            <Route path="/Admin/Dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+            <Route path="/Admin/Statistics" element={<AdminLayout><StatisticsPage /></AdminLayout>} />
+            <Route path="/Admin/Products" element={<AdminLayout><ProductsPage /></AdminLayout>} />
+            <Route path="/Admin/Category" element={<AdminLayout><CategoryPage /></AdminLayout>} />
+            <Route path="/Admin/AddProduct" element={<AdminLayout><AddProductPage /></AdminLayout>} />
+            <Route path="/Admin/Customers" element={<AdminLayout><CustomersPage /></AdminLayout>} />
+            <Route path="/Admin/Orders" element={<AdminLayout><OrdersPage /></AdminLayout>} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>

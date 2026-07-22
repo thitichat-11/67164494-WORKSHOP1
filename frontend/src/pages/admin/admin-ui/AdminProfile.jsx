@@ -4,10 +4,17 @@ import profileImage from "../../../assets/hero.png";
 
 export default function AdminProfile() {
   const [open, setOpen] = useState(false);
+  const [adminName, setAdminName] = useState("Admin"); // ค่าเริ่มต้นถ้าระบบดึงชื่อไม่เจอ
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 📌 ดึงชื่อ username ของคนที่ล็อกอินมาจาก localStorage
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setAdminName(storedUsername);
+    }
+
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpen(false);
@@ -18,7 +25,12 @@ export default function AdminProfile() {
   }, []);
 
   const handleLogout = () => {
+    // 📌 เคลียร์ข้อมูลใน localStorage ออกให้หมดตอน Logout
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("roleId");
+    localStorage.removeItem("username");
+    
     navigate("/signin");
   };
 
@@ -36,7 +48,8 @@ export default function AdminProfile() {
           alt="Admin"
           className="w-9 h-9 rounded-full object-cover border-2 border-[#e4e0d8]"
         />
-        <span className="text-sm font-medium text-[#1A1714]">Admin</span>
+        {/* 📌 แสดงชื่อ Admin แบบ Dynamic */}
+        <span className="text-sm font-medium text-[#1A1714]">{adminName}</span>
         <svg
           width="10"
           height="6"
@@ -68,4 +81,3 @@ export default function AdminProfile() {
     </div>
   );
 }
-

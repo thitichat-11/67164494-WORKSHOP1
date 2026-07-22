@@ -24,19 +24,22 @@ const Signin = ({ isOpen = true, onClose = () => {} }) => {
 
       const roleId = String(response.data.user.role_id)
 
-      if (roleId === '2') {
-        alert("Admin login is not allowed here. 😉😋😏")
-        navigate('/mainpage')
-        return
-      }
-
-      // เก็บ token กับ userid ไว้ใน localstorage
+      // 1. เก็บ token และข้อมูลที่จำเป็นลง localStorage ให้ครบก่อน
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('userId', response.data.user.id)
       localStorage.setItem('roleId', roleId)
+      localStorage.setItem('username', response.data.user.username)
       
       onClose()
-      navigate('/mainpage')
+
+      // 2. ตรวจสอบสิทธิ์ (Role) เพื่อแยกหน้า Redirect
+      if (roleId === '2') {
+        // หากเป็น Admin ให้ไปหน้า Dashboard
+        navigate('/Admin/Dashboard')
+      } else {
+        // หากเป็น User ปกติ ให้ไปหน้าหลัก
+        navigate('/mainpage')
+      }
 
     } catch (error) {
       console.error('Login Failed:', error.response?.data?.message || error.message)
